@@ -1,0 +1,101 @@
+{
+  "train": {
+    "examples": 15701,
+    "positives": 3538,
+    "positive_rate": 0.22533596586204702,
+    "threshold": 0.5,
+    "precision": 0.9785522788203753,
+    "recall": 0.7221594120972301,
+    "brier_score": 0.0660365432354049
+  },
+  "validation": {
+    "examples": 15714,
+    "positives": 3906,
+    "positive_rate": 0.24856815578465064,
+    "threshold": 0.5,
+    "precision": 0.9627732240437158,
+    "recall": 0.721710189452125,
+    "brier_score": 0.07256719704202097
+  },
+  "test-hot-44": {
+    "examples": 15708,
+    "positives": 3763,
+    "positive_rate": 0.23955946014769544,
+    "threshold": 0.5,
+    "precision": 0.9749559082892416,
+    "recall": 0.7345203295243157,
+    "brier_score": 0.06835946779503652
+  },
+  "test-hot-45": {
+    "examples": 15698,
+    "positives": 3638,
+    "positive_rate": 0.2317492674226016,
+    "threshold": 0.5,
+    "precision": 0.9613675213675213,
+    "recall": 0.7729521715228147,
+    "brier_score": 0.060540882458620576
+  },
+  "test-hot-46": {
+    "examples": 15710,
+    "positives": 3733,
+    "positive_rate": 0.23761935073201781,
+    "threshold": 0.5,
+    "precision": 0.9339328951919751,
+    "recall": 0.7232788641843022,
+    "brier_score": 0.07533987257384242
+  },
+  "test-shift-44": {
+    "examples": 15708,
+    "positives": 3731,
+    "positive_rate": 0.2375222816399287,
+    "threshold": 0.5,
+    "precision": 0.7300826005861977,
+    "recall": 0.7343875636558563,
+    "brier_score": 0.11424165358975945
+  },
+  "test-shift-45": {
+    "examples": 15698,
+    "positives": 3694,
+    "positive_rate": 0.23531660084087144,
+    "threshold": 0.5,
+    "precision": 0.7185567010309278,
+    "recall": 0.7547374120194911,
+    "brier_score": 0.11191022505126554
+  },
+  "test-shift-46": {
+    "examples": 15710,
+    "positives": 3773,
+    "positive_rate": 0.24016549968173137,
+    "threshold": 0.5,
+    "precision": 0.7113672079622839,
+    "recall": 0.7198515769944341,
+    "brier_score": 0.12253124303492395
+  },
+  "test-scan-44": {
+    "examples": 15716,
+    "positives": 7586,
+    "positive_rate": 0.4826927971494019,
+    "threshold": 0.5,
+    "precision": 0.38953234265734266,
+    "recall": 0.4699446348536778,
+    "brier_score": 0.3282293275148413
+  },
+  "test-scan-45": {
+    "examples": 15716,
+    "positives": 7586,
+    "positive_rate": 0.4826927971494019,
+    "threshold": 0.5,
+    "precision": 0.3880449141347424,
+    "recall": 0.46467176377537567,
+    "brier_score": 0.3282692637854454
+  },
+  "test-scan-46": {
+    "examples": 15716,
+    "positives": 7586,
+    "positive_rate": 0.4826927971494019,
+    "threshold": 0.5,
+    "precision": 0.38778841967784067,
+    "recall": 0.4696809912997627,
+    "brier_score": 0.3283235646830407
+  }
+}
