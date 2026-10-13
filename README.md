@@ -173,3 +173,13 @@ python -m kv_cache.suite --output results/gpu-suite --device cuda
 Use a new output directory for each suite. Archives are refreshed after every
 workload/budget group and in the failure handler. Download the ZIP before a free
 runtime expires. No passing GPU result for this extended suite is claimed yet.
+
+### Limited time or no Drive storage
+
+Use [`gpu_benchmark_groups.ipynb`](notebooks/gpu_benchmark_groups.ipynb) to run
+**one selected group per session**, with live progress and a ZIP download at the
+end. Select groups 1–6 in turn; Run all executes only the selected group. Keep
+completed ZIPs on your laptop and select the next unfinished group later.
+No Drive storage is used. An unfinished group can still be lost on runtime
+termination, so confirm each download before closing your laptop. This uses the
+same 150-request / 3-repeat / float32 protocol as the full suite.
