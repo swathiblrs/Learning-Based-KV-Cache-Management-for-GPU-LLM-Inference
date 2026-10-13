@@ -154,3 +154,22 @@ repeat the same workload in FP16 separately before publishing FP16 measurements.
 
 Local regression tests and tiny-model CPU checks pass. Confirmation on the T4 is
 still required; this Mac environment cannot validate the failing CUDA path.
+
+## Extended GPU evaluation notebook
+
+After the short float32 check passes, use
+[`gpu_benchmark_suite.ipynb`](notebooks/gpu_benchmark_suite.ipynb).
+It runs 150 requests × five strategies × three repeats × three workloads × two
+retained-KV budgets (8/32 MiB): 90 runs / 13,500 request executions, four generated
+tokens each. This takes substantially longer than the short check. Workload seed
+99 is held out from training; repeats measure timing variation, not new samples.
+The suite stops on failed correctness and archives completed/partial reports.
+Abrupt session termination can still lose un-downloaded files.
+
+```bash
+python -m kv_cache.suite --output results/gpu-suite --device cuda
+```
+
+Use a new output directory for each suite. Archives are refreshed after every
+workload/budget group and in the failure handler. Download the ZIP before a free
+runtime expires. No passing GPU result for this extended suite is claimed yet.
