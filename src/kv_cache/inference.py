@@ -30,22 +30,24 @@ def cache_bytes(past):
     return sum(t.numel() * t.element_size() for layer in past.layers for t in (layer.keys, layer.values))
 
 
-def load_model(name, device, tiny=False):
+def load_model(name, device, tiny=False, dtype="auto"):
     import torch
     from transformers import AutoModelForCausalLM, LlamaConfig, LlamaForCausalLM
     if device == "cuda" and not torch.cuda.is_available():
         raise ValueError("CUDA is unavailable. Use a free NVIDIA GPU notebook, or --device cpu --tiny for correctness only.")
     if device == "mps" and not torch.backends.mps.is_available():
         raise ValueError("MPS is unavailable")
+    precision = {"auto": torch.float32 if device == "cpu" else torch.float16,
+                 "float32": torch.float32, "float16": torch.float16}[dtype]
     torch.manual_seed(0)
     if tiny:
         model = LlamaForCausalLM(LlamaConfig(vocab_size=128, hidden_size=32,
             intermediate_size=64, num_hidden_layers=2, num_attention_heads=4,
             num_key_value_heads=2, max_position_embeddings=2048))
     else:
-        model = AutoModelForCausalLM.from_pretrained(name, torch_dtype=torch.float32 if device == "cpu" else torch.float16,
+        model = AutoModelForCausalLM.from_pretrained(name, dtype=precision,
                                                    attn_implementation="eager")
-    return model.to(device).eval()
+    return model.to(device=device, dtype=precision).eval()
 
 
 def benchmark(model, trace, policy, budget, predictor=None, device="cuda", new_tokens=8):
@@ -65,7 +67,7 @@ def benchmark(model, trace, policy, budget, predictor=None, device="cuda", new_t
     # Pre-tokenized synthetic requests, same suffix and fixed decode length for all policies.
     inputs = [token_ids(r, config.vocab_size).to(device) for r in trace]
     suffix = torch.tensor([[3, 4, 5, 6, 7, 8, 9, 10]], device=device)
-    ttft, latencies, outputs = [], [], []
+    ttft, latencies, outputs, hit_flags = [], [], [], []
     hits = reused = 0
     with torch.inference_mode():
         for _ in range(2):
@@ -78,6 +80,7 @@ def benchmark(model, trace, policy, budget, predictor=None, device="cuda", new_t
             sync(device)
             start = perf_counter()
             entry = cache.lookup(r, t)
+            hit_flags.append(entry is not None)
             if entry is not None:
                 hits += 1
                 reused += r.tokens
@@ -87,15 +90,21 @@ def benchmark(model, trace, policy, budget, predictor=None, device="cuda", new_t
                 out = model(torch.cat((prefix, suffix), dim=1), use_cache=True)
             else:
                 retain = cache.reserve(r.tokens * bpt, t)
-                pref = model(prefix, use_cache=True)
-                past = pref.past_key_values
+                # Match no-cache prefill shape; retain only the prefix afterward.
+                # This avoids an extra model forward on every cache miss.
+                out = model(torch.cat((prefix, suffix), dim=1), use_cache=True)
                 if retain:
-                    size = cache_bytes(past)
+                    retained = copy.deepcopy(out.past_key_values)
+                    retained.crop(r.tokens)
+                    # crop() may return views: clone slices to release suffix storage.
+                    for layer in retained.layers:
+                        layer.keys = layer.keys.clone()
+                        layer.values = layer.values.clone()
+                    size = cache_bytes(retained)
                     if size != r.tokens * bpt:
                         raise ValueError("Unsupported KV layout: actual bytes differ from reservation")
-                    cache.insert(r.prefix, size, copy.deepcopy(past), t)
-                del pref
-                out = model(suffix, past_key_values=past, use_cache=True)
+                    cache.insert(r.prefix, size, retained, t)
+                    del retained
             token = out.logits[:, -1].argmax(dim=-1, keepdim=True)
             generated = [token]
             sync(device)
@@ -125,4 +134,28 @@ def benchmark(model, trace, policy, budget, predictor=None, device="cuda", new_t
         retained_peak_bytes=cache.peak, cache_budget_bytes=budget,
         cuda_peak_allocated_bytes=torch.cuda.max_memory_allocated() if device == "cuda" else None,
         eviction_decision_p95_ms=float(np.percentile(cache.decision_ms, 95)) if cache.decision_ms else 0,
+        cache_hit_by_request=hit_flags, generated_token_ids=outputs,
         output_sha256=hashlib.sha256(str(outputs).encode()).hexdigest(), evictions=cache.evictions)
+
+
+def compare_outputs(rows):
+    """Compare every completed run against the first no-cache reference.
+
+    Preserve strict token equality: discrepancies are never waved away as rounding.
+    Per-request details distinguish hit-path failures from all-request differences.
+    """
+    reference = next((r for r in rows if r["policy"] == "none"), None)
+    if reference is None:
+        return dict(status="pending", mismatches=[])
+    mismatches = []
+    for row in rows:
+        for i, (expected, actual) in enumerate(zip(reference["generated_token_ids"], row["generated_token_ids"])):
+            if expected != actual:
+                first = next((j for j, pair in enumerate(zip(expected, actual)) if pair[0] != pair[1]),
+                             min(len(expected), len(actual)))
+                mismatches.append(dict(policy=row["policy"], repeat=row["repeat"], request_index=i,
+                                       first_different_token=first, expected=expected, actual=actual,
+                                       cache_hit=row.get("cache_hit_by_request", [None] * len(row["generated_token_ids"]))[i]))
+        if len(reference["generated_token_ids"]) != len(row["generated_token_ids"]):
+            raise ValueError("Cannot compare runs with different request counts")
+    return dict(status="failed" if mismatches else "passed", mismatches=mismatches)

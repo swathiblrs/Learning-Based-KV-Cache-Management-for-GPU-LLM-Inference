@@ -100,7 +100,7 @@ KV, cloning, inputs, and allocator overhead require additional device memory.
 
 ## Scope and evidence
 
-- No NVIDIA GPU measurements have been produced on the development Mac.
+- The first Colab T4 run completed but failed strict output equality; see the investigation below.
 - Synthetic traces/token IDs do not establish production workload or answer quality.
 - Independent test seeds prevent sequence reuse, but distributions remain synthetic.
 - Metadata grows with unique prefixes; production deployment needs bounded metadata.
@@ -123,4 +123,34 @@ simplified implementation and makes no claim to invent learned caching.
 
 See [checked-in validation artifacts](docs/validation/README.md) for the first
 90 simulation runs and a real-KV CPU correctness smoke test. All 14 tests passed;
-NVIDIA GPU performance remains unmeasured.
+These initial results predate the Colab investigation below.
+
+
+## First T4 run and corrective changes
+
+The user-provided Colab run completed 15 measurements (100 requests × five
+strategies × three repeats) on a Tesla T4 using FP16 SmolLM2-135M. All four caching
+strategies produced the same hash in every repeat; the no-cache path consistently
+produced a different hash. Raw results are preserved in
+[the failed-run artifact](docs/validation/t4-first-run.json). They are **not a
+passing correctness result** and should not support resume speedup claims.
+
+The old miss path computed prefix and suffix in separate model forwards, unlike
+the no-cache path. Misses now use one full-prompt forward, then clone/crop the
+retained prefix. This removes redundant forward overhead and aligns miss execution
+shapes. Hits still use prefix reuse, so GPU numerical discrepancies remain possible.
+FP16 rounding is a hypothesis, not a confirmed root cause from output hashes alone.
+
+The updated notebook starts with 30 requests, one repeat, and `--dtype float32`.
+All strategies use that same precision. It isolates its dependencies from Colab's
+Gradio/Diffusers environment, stops on test failures, and archives results even if
+the benchmark fails. Reload the notebook from GitHub to get these cells.
+
+New reports preserve generated token IDs, hit flags, first divergent token per
+request, and completion status. Reports checkpoint atomically after each completed
+policy. A runtime terminated mid-policy still loses that policy's unfinished work.
+Strict output checks remain enabled. A float32 pass does not prove FP16 correctness;
+repeat the same workload in FP16 separately before publishing FP16 measurements.
+
+Local regression tests and tiny-model CPU checks pass. Confirmation on the T4 is
+still required; this Mac environment cannot validate the failing CUDA path.

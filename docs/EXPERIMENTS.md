@@ -29,8 +29,8 @@
   non-evicting reservations; it does not include cloning or all lookup overhead.
 
 All policies use the same weights, dtype, input trace, budget, and decode length.
-No-cache prefill uses a single full prompt. Cache misses process prefix and suffix
-separately to obtain reusable state, so cache policies pay that extra overhead.
+No-cache prefill uses a single full prompt. Cache misses now use the same full-prompt prefill shape, then copy/crop
+retained prefix state. Hits process only the suffix; copying remains in timing.
 Fixed-length decoding deliberately ignores EOS to keep work comparable; it is
 not representative of real output-length distributions.
 

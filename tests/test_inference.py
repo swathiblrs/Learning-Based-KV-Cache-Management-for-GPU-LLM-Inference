@@ -30,6 +30,18 @@ class InferenceTests(unittest.TestCase):
         self.assertEqual(pref.get_seq_length(), 4)
         self.assertEqual(cache_bytes(pref), before)
 
+    def test_miss_uses_one_prefill_and_hit_uses_only_suffix(self):
+        from kv_cache.inference import benchmark
+        lengths = []
+        hook = self.model.register_forward_pre_hook(lambda module, args: lengths.append(args[0].shape[1]))
+        try:
+            row = benchmark(self.model, [Request("a", 8), Request("a", 8)], "lru", 4096,
+                            device="cpu", new_tokens=1)
+        finally:
+            hook.remove()
+        self.assertEqual(lengths, [16, 16, 16, 8])  # Two warmups, one miss, one hit.
+        self.assertEqual(row["cache_hit_by_request"], [False, True])
+
     def test_policies_preserve_outputs_and_budget(self):
         from kv_cache.inference import benchmark
         trace = [Request(k, 8) for k in "abacabad"]
@@ -42,6 +54,29 @@ class InferenceTests(unittest.TestCase):
         for r in rows:
             self.assertLessEqual(r["retained_peak_bytes"], 4096)
 
+
+class OutputDiagnosticsTests(unittest.TestCase):
+    def test_reports_first_divergence_without_accepting_it(self):
+        from kv_cache.inference import compare_outputs
+        rows = [dict(policy="none", repeat=0, generated_token_ids=[[1, 2], [3, 4]]),
+                dict(policy="lru", repeat=0, generated_token_ids=[[1, 2], [3, 5]])]
+        result = compare_outputs(rows)
+        self.assertEqual(result["status"], "failed")
+        self.assertEqual(result["mismatches"][0]["request_index"], 1)
+        self.assertEqual(result["mismatches"][0]["first_different_token"], 1)
+
+    def test_pending_until_reference_and_repeat_mismatch(self):
+        from kv_cache.inference import compare_outputs
+        self.assertEqual(compare_outputs([])["status"], "pending")
+        rows = [dict(policy="none", repeat=0, generated_token_ids=[[1]]),
+                dict(policy="none", repeat=1, generated_token_ids=[[2]])]
+        self.assertEqual(compare_outputs(rows)["status"], "failed")
+
+    def test_request_count_mismatch_rejected(self):
+        from kv_cache.inference import compare_outputs
+        with self.assertRaises(ValueError):
+            compare_outputs([dict(policy="none", repeat=0, generated_token_ids=[[1]]),
+                             dict(policy="lru", repeat=0, generated_token_ids=[])])
 
 if __name__ == "__main__":
     unittest.main()

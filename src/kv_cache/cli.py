@@ -11,7 +11,9 @@ from .traces import generate, read_trace, write_trace
 def dump(path, value):
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(value, indent=2) + "\n")
+    temporary = p.with_suffix(p.suffix + ".tmp")
+    temporary.write_text(json.dumps(value, indent=2) + "\n")
+    temporary.replace(p)
 
 
 def experiment(output, requests=2000, seed=42):
@@ -55,6 +57,7 @@ def main():
     gpu.add_argument("--trace", help="Optional JSONL trace; must be held out from training")
     gpu.add_argument("--model", default="HuggingFaceTB/SmolLM2-135M")
     gpu.add_argument("--device", choices=("cuda", "cpu", "mps"), default="cuda")
+    gpu.add_argument("--dtype", choices=("auto", "float32", "float16"), default="auto")
     gpu.add_argument("--tiny", action="store_true", help="Random tiny Llama for correctness; no download")
     gpu.add_argument("--requests", type=int, default=100)
     gpu.add_argument("--seed", type=int, default=99)
@@ -68,14 +71,22 @@ def main():
             experiment(args.output, args.requests, args.seed)
         else:
             import gc
-            from .inference import benchmark, load_model
+            from .inference import benchmark, load_model, compare_outputs
             if args.repeats < 1 or args.budget_mib < 0:
                 raise ValueError("Repeats must be positive; budget must be nonnegative")
             predictor = Predictor.load(args.predictor)
             trace = read_trace(args.trace) if args.trace else generate(args.requests, args.seed, "shift")
-            model = load_model(args.model, args.device, args.tiny)
+            model = load_model(args.model, args.device, args.tiny, args.dtype)
             model._benchmark_tiny = args.tiny
             rows = []
+            digest = hashlib.sha256("\n".join(f"{r.prefix}:{r.tokens}" for r in trace).encode()).hexdigest()
+            def checkpoint(complete=False):
+                comparison = compare_outputs(rows)
+                dump(args.output, dict(schema=2, complete=complete, expected_runs=args.repeats * 5,
+                    trace_sha256=digest, seed=args.seed, requested_dtype=args.dtype,
+                    predictor_sha256=hashlib.sha256(Path(args.predictor).read_bytes()).hexdigest(),
+                    greedy_outputs_match=comparison["status"] == "passed" if complete else None,
+                    correctness=comparison, runs=rows))
             for repeat in range(args.repeats):
                 policies = ["none", "fifo", "lru", "lfu", "learned"]
                 np.random.default_rng(args.seed + repeat).shuffle(policies)
@@ -85,12 +96,11 @@ def main():
                                     predictor, args.device, args.new_tokens)
                     row.update(repeat=repeat, model="random-tiny-llama" if args.tiny else args.model)
                     rows.append(row)
+                    checkpoint()
                     print(f"{policy}: p95 TTFT={row['ttft_p95_ms']:.2f} ms; hits={row['hits']}/{len(trace)}")
-            digest = hashlib.sha256("\n".join(f"{r.prefix}:{r.tokens}" for r in trace).encode()).hexdigest()
-            dump(args.output, dict(trace_sha256=digest, predictor_sha256=hashlib.sha256(Path(args.predictor).read_bytes()).hexdigest(),
-                                  greedy_outputs_match=len({r["output_sha256"] for r in rows}) == 1, runs=rows))
-            if len({r["output_sha256"] for r in rows}) != 1:
-                raise ValueError("Greedy outputs differ across policies; results saved for investigation, do not claim correctness")
+            checkpoint(complete=True)
+            if compare_outputs(rows)["status"] != "passed":
+                raise ValueError("Greedy outputs differ; per-request diagnostics saved. Retry a short --dtype float32 run; do not claim correctness.")
             print(f"Saved {args.output}; identical greedy outputs across all policies.")
     except (ValueError, ImportError) as e:
         parser.exit(2, f"Error: {e}\n")
