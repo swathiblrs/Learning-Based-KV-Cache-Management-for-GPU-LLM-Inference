@@ -1,0 +1,28 @@
+{
+  "status": "complete",
+  "device": "cuda",
+  "tiny": false,
+  "dtype": "float32",
+  "requests": 150,
+  "repeats": 3,
+  "budgets_mib": [
+    8.0,
+    32.0
+  ],
+  "workloads": [
+    "hot",
+    "shift",
+    "scan"
+  ],
+  "test_seed": 99,
+  "train_seed": 42,
+  "output_tokens": 4,
+  "completed": [
+    "hot-8MiB",
+    "hot-32MiB",
+    "shift-8MiB",
+    "shift-32MiB",
+    "scan-8MiB",
+    "scan-32MiB"
+  ]
+}

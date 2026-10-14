@@ -1,0 +1,20 @@
+[
+  {
+    "run": "initial-fp16",
+    "original_filename": "kv-cache-results.zip",
+    "bytes": 30744,
+    "sha256": "b20582857c42b2007240fa60c7d224d0537a3ce7120acff08c71d108d6e7abb1"
+  },
+  {
+    "run": "short-fp32",
+    "original_filename": "kv-cache-results (1).zip",
+    "bytes": 32708,
+    "sha256": "f89b636ab32af6ab54a6acb11845d7f971dbe5984f117df42c65cdd11535ed79"
+  },
+  {
+    "run": "extended-fp32",
+    "original_filename": "kv-cache-suite-20261013-183501-472468.zip",
+    "bytes": 67181,
+    "sha256": "f2a6471d159c3f6f045241577c7c2e635177cafbbb6f58a2b060631fb5997ad0"
+  }
+]

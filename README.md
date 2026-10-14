@@ -183,3 +183,11 @@ completed ZIPs on your laptop and select the next unfinished group later.
 No Drive storage is used. An unfinished group can still be lost on runtime
 termination, so confirm each download before closing your laptop. This uses the
 same 150-request / 3-repeat / float32 protocol as the full suite.
+
+## Saved Colab GPU results
+
+[All downloaded October 13 Colab results](benchmarks/colab-2026-10-13/README.md)
+are now preserved, including original ZIPs, extracted reports, checksums, and a
+CSV summary. The extended T4 float32 suite completed all 90 runs with matching
+outputs. Learned eviction sometimes improved reuse but did not demonstrate a
+performance advantage. The earlier FP16 failure remains preserved separately.
