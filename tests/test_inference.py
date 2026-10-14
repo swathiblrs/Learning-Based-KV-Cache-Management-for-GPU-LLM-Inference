@@ -42,6 +42,26 @@ class InferenceTests(unittest.TestCase):
         self.assertEqual(lengths, [16, 16, 16, 8])  # Two warmups, one miss, one hit.
         self.assertEqual(row["cache_hit_by_request"], [False, True])
 
+    def test_stage_profile_preserves_outputs_and_covers_eviction_and_hits(self):
+        from kv_cache.inference import benchmark
+        trace = [Request(k, 8) for k in "abacabad"]
+        predictor = Predictor(np.zeros(4), np.ones(4), np.zeros(4), 0)
+        plain = benchmark(self.model, trace, "learned", 4096, predictor, "cpu", 3)
+        profiled = benchmark(self.model, trace, "learned", 4096, predictor, "cpu", 3,
+                             profile_stages=True)
+        self.assertEqual(plain["output_sha256"], profiled["output_sha256"])
+        self.assertIsNone(plain["profiling"])
+        self.assertEqual(profiled["kind"], "real_model_profile")
+        summary = profiled["profiling"]["summary"]
+        self.assertEqual(summary["cache_lookup"]["calls"], len(trace))
+        self.assertEqual(summary["hit_cache_copy"]["calls"], profiled["hits"])
+        self.assertEqual(summary["full_prefill"]["calls"], len(trace) - profiled["hits"])
+        self.assertGreater(summary["prediction"]["calls"], 0)
+        self.assertEqual(summary["decode"]["calls"], len(trace))
+        self.assertEqual(len(profiled["profiling"]["requests"]), len(trace))
+        for item in summary.values():
+            self.assertGreaterEqual(item["total_ms"], 0)
+
     def test_policies_preserve_outputs_and_budget(self):
         from kv_cache.inference import benchmark
         trace = [Request(k, 8) for k in "abacabad"]

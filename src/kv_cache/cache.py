@@ -1,4 +1,5 @@
 """Whole-prefix cache. Resident bytes exclude model weights and active state."""
+from contextlib import nullcontext
 from dataclasses import dataclass
 from time import perf_counter
 from .model import features, observe
@@ -12,11 +13,12 @@ class Entry:
 
 
 class PrefixCache:
-    def __init__(self, budget, policy="lru", predictor=None):
+    def __init__(self, budget, policy="lru", predictor=None, profiler=None):
         if budget < 0 or policy not in ("none", "fifo", "lru", "lfu", "learned"):
             raise ValueError("Invalid budget or policy")
         if policy == "learned" and predictor is None:
             raise ValueError("Learned policy requires a predictor")
+        self.profiler = profiler
         self.budget, self.policy, self.predictor = budget, policy, predictor
         self.entries, self.history = {}, {}
         self.used = self.peak = self.evictions = 0
@@ -36,7 +38,8 @@ class PrefixCache:
         if self.used + size > self.budget:
             keys = list(self.entries)
             if self.policy == "learned":
-                probabilities = self.predictor.predict([features(self.history[k], step) for k in keys])
+                with self.profiler.stage("prediction") if self.profiler else nullcontext():
+                    probabilities = self.predictor.predict([features(self.history[k], step) for k in keys])
                 # Approximate prefill work saved per resident byte, not measured FLOPs.
                 scores = {k: float(p) * self.history[k].tokens / self.entries[k].size
                           for k, p in zip(keys, probabilities)}

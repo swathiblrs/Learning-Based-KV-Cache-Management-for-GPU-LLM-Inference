@@ -67,3 +67,27 @@ Develop/train on the laptop. Use `--device mps` optionally for Apple GPU runs;
 label those as Apple GPU results, never CUDA results. Run NVIDIA measurements
 only when a free authorized GPU session is available. Save artifacts before the
 session ends. No cloud account provisioning, paid service, or API key is required.
+
+## Stage profiling (diagnostics only)
+
+Use `--profile-stages` with `kv-cache benchmark`, or `gpu_profile.ipynb`.
+It synchronizes the device before/after each measured stage. These are host
+wall-clock elapsed times, including Python/framework launch overhead and GPU
+completion; they are not CUDA kernel-only measurements. Additional barriers
+perturb timings and can remove overlap. Do not compare these throughput/latency
+fields with the uninstrumented suite as proof of speedup.
+
+Stages are `cache_lookup`, `eviction_decision`, `prediction`, `hit_cache_copy`,
+`hit_suffix_prefill`, `full_prefill`, `retain_prefix_copy`, `first_token_selection`,
+and `decode`. Prediction includes feature construction and model evaluation;
+it is nested in eviction_decision and must not be added to that parent duration.
+Retain-prefix copying includes deep copy, crop, slice cloning, byte validation,
+and insertion. Decode excludes first-token selection. Reports preserve per-request
+hit flags, prefix-path stages, and summary counts, totals, means and p95 values.
+Absent stages were not invoked; means include only requests invoking the stage.
+Instrumented request latency also includes unassigned bookkeeping/timer overhead.
+
+The diagnostic notebook uses a frozen predictor, 60 hot-prefix requests, 32 MiB,
+one repeat, float32, and four generated tokens. It records the checkout revision
+and downloads its own ZIP. It is intentionally shorter than the full suite.
+This characterizes one workload, not all cache sizes, models, or traffic patterns.

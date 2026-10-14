@@ -3,6 +3,7 @@
 Synthetic token IDs isolate cache behavior; this is not an answer-quality test.
 Whole prefixes are independent objects, so no shared-page dependency is evicted.
 """
+from contextlib import nullcontext
 import copy
 import hashlib
 import platform
@@ -50,7 +51,7 @@ def load_model(name, device, tiny=False, dtype="auto"):
     return model.to(device=device, dtype=precision).eval()
 
 
-def benchmark(model, trace, policy, budget, predictor=None, device="cuda", new_tokens=8):
+def benchmark(model, trace, policy, budget, predictor=None, device="cuda", new_tokens=8, profile_stages=False):
     import torch
     import transformers
     if new_tokens < 1:
@@ -63,7 +64,10 @@ def benchmark(model, trace, policy, budget, predictor=None, device="cuda", new_t
     heads = getattr(config, "num_key_value_heads", config.num_attention_heads)
     dim = getattr(config, "head_dim", None) or config.hidden_size // config.num_attention_heads
     bpt = 2 * config.num_hidden_layers * heads * dim * next(model.parameters()).element_size()
-    cache = PrefixCache(budget, policy, predictor)
+    from .profiling import StageProfiler
+    profiler = StageProfiler(lambda: sync(device)) if profile_stages else None
+    stage = profiler.stage if profiler else lambda name: nullcontext()
+    cache = PrefixCache(budget, policy, predictor, profiler=profiler)
     # Pre-tokenized synthetic requests, same suffix and fixed decode length for all policies.
     inputs = [token_ids(r, config.vocab_size).to(device) for r in trace]
     suffix = torch.tensor([[3, 4, 5, 6, 7, 8, 9, 10]], device=device)
@@ -79,40 +83,53 @@ def benchmark(model, trace, policy, budget, predictor=None, device="cuda", new_t
         for t, (r, prefix) in enumerate(zip(trace, inputs)):
             sync(device)
             start = perf_counter()
-            entry = cache.lookup(r, t)
+            if profiler:
+                profiler.begin(t)
+            with stage("cache_lookup"):
+                entry = cache.lookup(r, t)
+            if profiler:
+                profiler.current["cache_hit"] = entry is not None
             hit_flags.append(entry is not None)
             if entry is not None:
                 hits += 1
                 reused += r.tokens
-                past = copy.deepcopy(entry.payload)  # Never mutate resident KV during decoding.
-                out = model(suffix, past_key_values=past, use_cache=True)
+                with stage("hit_cache_copy"):
+                    past = copy.deepcopy(entry.payload)  # Never mutate resident KV during decoding.
+                with stage("hit_suffix_prefill"):
+                    out = model(suffix, past_key_values=past, use_cache=True)
             elif policy == "none":
-                out = model(torch.cat((prefix, suffix), dim=1), use_cache=True)
+                with stage("full_prefill"):
+                    out = model(torch.cat((prefix, suffix), dim=1), use_cache=True)
             else:
-                retain = cache.reserve(r.tokens * bpt, t)
+                with stage("eviction_decision"):
+                    retain = cache.reserve(r.tokens * bpt, t)
                 # Match no-cache prefill shape; retain only the prefix afterward.
                 # This avoids an extra model forward on every cache miss.
-                out = model(torch.cat((prefix, suffix), dim=1), use_cache=True)
+                with stage("full_prefill"):
+                    out = model(torch.cat((prefix, suffix), dim=1), use_cache=True)
                 if retain:
-                    retained = copy.deepcopy(out.past_key_values)
-                    retained.crop(r.tokens)
-                    # crop() may return views: clone slices to release suffix storage.
-                    for layer in retained.layers:
-                        layer.keys = layer.keys.clone()
-                        layer.values = layer.values.clone()
-                    size = cache_bytes(retained)
-                    if size != r.tokens * bpt:
-                        raise ValueError("Unsupported KV layout: actual bytes differ from reservation")
-                    cache.insert(r.prefix, size, retained, t)
-                    del retained
-            token = out.logits[:, -1].argmax(dim=-1, keepdim=True)
-            generated = [token]
+                    with stage("retain_prefix_copy"):
+                        retained = copy.deepcopy(out.past_key_values)
+                        retained.crop(r.tokens)
+                        # crop() may return views: clone slices to release suffix storage.
+                        for layer in retained.layers:
+                            layer.keys = layer.keys.clone()
+                            layer.values = layer.values.clone()
+                        size = cache_bytes(retained)
+                        if size != r.tokens * bpt:
+                            raise ValueError("Unsupported KV layout: actual bytes differ from reservation")
+                        cache.insert(r.prefix, size, retained, t)
+                        del retained
+            with stage("first_token_selection"):
+                token = out.logits[:, -1].argmax(dim=-1, keepdim=True)
+                generated = [token]
             sync(device)
             ttft.append((perf_counter() - start) * 1000)
-            for _ in range(new_tokens - 1):
-                out = model(token, past_key_values=out.past_key_values, use_cache=True)
-                token = out.logits[:, -1].argmax(dim=-1, keepdim=True)
-                generated.append(token)
+            with stage("decode"):
+                for _ in range(new_tokens - 1):
+                    out = model(token, past_key_values=out.past_key_values, use_cache=True)
+                    token = out.logits[:, -1].argmax(dim=-1, keepdim=True)
+                    generated.append(token)
             sync(device)
             latencies.append((perf_counter() - start) * 1000)
             outputs.append(torch.cat(generated, dim=1).cpu().tolist()[0])
@@ -120,7 +137,8 @@ def benchmark(model, trace, policy, budget, predictor=None, device="cuda", new_t
             if "past" in locals():
                 del past
     total_seconds = sum(latencies) / 1000
-    return dict(kind="real_model", device=device, policy=policy, requests=len(trace),
+    return dict(kind="real_model_profile" if profiler else "real_model",
+        profiling=profiler.report() if profiler else None, device=device, policy=policy, requests=len(trace),
         model_type=config.model_type, random_weights=bool(getattr(model, "_benchmark_tiny", False)),
         torch_version=torch.__version__, transformers_version=transformers.__version__,
         hardware=torch.cuda.get_device_name() if device == "cuda" else platform.machine(),

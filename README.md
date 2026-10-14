@@ -191,3 +191,17 @@ are now preserved, including original ZIPs, extracted reports, checksums, and a
 CSV summary. The extended T4 float32 suite completed all 90 runs with matching
 outputs. Learned eviction sometimes improved reuse but did not demonstrate a
 performance advantage. The earlier FP16 failure remains preserved separately.
+
+## Investigate overhead
+
+[`gpu_profile.ipynb`](notebooks/gpu_profile.ipynb) runs a short diagnostic with live
+output and an immediate ZIP download. It measures lookup, prediction/eviction,
+KV copying, prefill, and decode, while preserving strict output checks. Profiling
+adds synchronization: treat these measurements as diagnostic, not new speedup
+claims. The existing uninstrumented results remain unchanged.
+
+```bash
+kv-cache benchmark --predictor docs/validation/predictor.json --device cuda \
+  --dtype float32 --workload hot --requests 60 --budget-mib 32 \
+  --new-tokens 4 --repeats 1 --profile-stages --output results/profile.json
+```

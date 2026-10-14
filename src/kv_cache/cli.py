@@ -53,6 +53,8 @@ def main():
     exp.add_argument("--requests", type=int, default=2000)
     exp.add_argument("--seed", type=int, default=42)
     gpu = sub.add_parser("benchmark", help="Run real Transformers inference; CUDA by default")
+    gpu.add_argument("--profile-stages", action="store_true", help="Diagnostic timings with synchronization overhead; not a performance benchmark")
+    gpu.add_argument("--workload", choices=("hot", "shift", "scan"), default="shift")
     gpu.add_argument("--predictor", required=True)
     gpu.add_argument("--trace", help="Optional JSONL trace; must be held out from training")
     gpu.add_argument("--model", default="HuggingFaceTB/SmolLM2-135M")
@@ -75,7 +77,7 @@ def main():
             if args.repeats < 1 or args.budget_mib < 0:
                 raise ValueError("Repeats must be positive; budget must be nonnegative")
             predictor = Predictor.load(args.predictor)
-            trace = read_trace(args.trace) if args.trace else generate(args.requests, args.seed, "shift")
+            trace = read_trace(args.trace) if args.trace else generate(args.requests, args.seed, args.workload)
             model = load_model(args.model, args.device, args.tiny, args.dtype)
             model._benchmark_tiny = args.tiny
             rows = []
@@ -84,6 +86,7 @@ def main():
                 comparison = compare_outputs(rows)
                 dump(args.output, dict(schema=2, complete=complete, expected_runs=args.repeats * 5,
                     trace_sha256=digest, seed=args.seed, requested_dtype=args.dtype,
+                    profile_stages=args.profile_stages, workload=args.workload if not args.trace else "imported",
                     predictor_sha256=hashlib.sha256(Path(args.predictor).read_bytes()).hexdigest(),
                     greedy_outputs_match=comparison["status"] == "passed" if complete else None,
                     correctness=comparison, runs=rows))
@@ -93,7 +96,7 @@ def main():
                 for policy in policies:
                     gc.collect()
                     row = benchmark(model, trace, policy, int(args.budget_mib * 1024 ** 2),
-                                    predictor, args.device, args.new_tokens)
+                                    predictor, args.device, args.new_tokens, profile_stages=args.profile_stages)
                     row.update(repeat=repeat, model="random-tiny-llama" if args.tiny else args.model)
                     rows.append(row)
                     checkpoint()
