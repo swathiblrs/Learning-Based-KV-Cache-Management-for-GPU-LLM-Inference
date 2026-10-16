@@ -1,207 +1,222 @@
 # Learning-Based KV-Cache Management for GPU LLM Inference
 
-Can a small reuse predictor make better prefix-cache retention decisions than
-traditional eviction rules? This repository provides a runnable research
-prototype to investigate that question. It does **not** claim a speedup in advance.
+A research prototype that trains a small reuse predictor and evaluates whether
+learned prefix-cache eviction improves LLM inference under a fixed memory budget.
+Built with Python, NumPy, PyTorch, and Hugging Face Transformers.
 
-## What is implemented
+**Current result:** the extended NVIDIA T4 float32 experiment completed **90 runs /
+13,500 request executions**, with matching generated outputs across all strategies
+within each workload/budget comparison. Learned eviction improved reuse over LRU
+in some cases, but **did not demonstrate a latency or throughput advantage**.
+Profiling identifies KV copying as a larger measured cost than predictor execution.
+Reducing that copying safely is the next optimization; it is not implemented yet.
 
-- Reproducible synthetic hot-prefix, popularity-shift, and scan workloads.
-- Byte-budgeted whole-prefix caching: no-cache, FIFO, LRU, LFU, and learned eviction.
-- A NumPy logistic-regression reuse predictor with inspectable JSON artifacts.
-- Independent train/validation/test traces, complete-horizon labels, and ML metrics.
-- Real Hugging Face Transformers KV reuse, fixed-length greedy decoding, and
-  synchronized CPU/MPS/CUDA benchmarks; copied KV protects immutable cached prefixes.
-- Unit and tiny-model correctness tests without downloading pretrained weights.
+## How it works
 
-This is a sequential research harness, not a vLLM replacement. It does not
-implement continuous batching, paged attention, concurrent serving, multi-GPU
-execution, custom CUDA kernels, or partial-prefix matching.
+```mermaid
+flowchart TD
+    A[Historical request traces] --> B[Features and future-reuse labels]
+    B --> C[Train logistic regression]
+    C --> D[Saved reuse predictor]
+    E[Incoming request] --> F{Exact prefix cached?}
+    F -->|Yes| G[Copy cached KV and process suffix]
+    F -->|No| H[Reserve cache space if prefix fits]
+    D -.-> H
+    H --> I[Full-input prefill and optional prefix retention]
+    G --> J[Generate tokens on GPU]
+    I --> J
+    J --> K[Verify outputs and measure performance]
+```
 
-## Start locally (no GPU required)
+The predictor estimates reuse within the next **32 requests** using recency,
+cumulative frequency, prefix length, and mean historical interarrival gap.
+Log-transformed features are normalized using training data only. Future accesses
+are used for labels, never features; the incomplete label horizon at the end of
+each training trace is excluded.
 
-Python 3.10+ is required. On macOS, the system `python3` may be too old.
+Five strategies are compared: **no cache, FIFO, LRU, LFU, and learned eviction**.
+The learned strategy evicts entries with the lowest
+`P(reuse) × prefix_tokens / retained_bytes` first. This is a heuristic value score,
+not an optimal policy or a measured FLOP estimate. With a fixed full-attention
+model, bytes scale with prefix length, so that ratio largely cancels.
+
+The cache retains independent whole prefixes. Matching is exact, not semantic.
+Requests run sequentially, and active generation uses separate KV state. Cache
+misses use full-input prefill; the retained prefix is copied and cropped afterward.
+Hits copy retained KV before extending it, preserving the original cached state.
+The budget covers retained KV only—not model weights, active KV, temporary copies,
+inputs, or allocator overhead.
+
+## Measured NVIDIA GPU results
+
+The extended experiment used **SmolLM2-135M, NVIDIA T4, float32**, 150 requests per
+run, four generated tokens per request, three timing repeats, three workloads,
+and 8/32 MiB cache budgets. All six groups completed and passed strict generated-
+token equality against the no-cache reference. Workload seed 99 was held out from
+training; repeats are timing trials, not independent workload samples.
+
+Selected **32 MiB** results:
+
+| Workload | LRU hit rate | Learned hit rate | LRU median run-p95 TTFT | Learned median run-p95 TTFT |
+|---|---:|---:|---:|---:|
+| Hot prefixes | 50.0% | 55.3% | 63.25 ms | 65.19 ms |
+| Popularity shift | 49.3% | 50.0% | 60.62 ms | 66.14 ms |
+| Sequential scan | 0% | 0% | 61.29 ms | 71.16 ms |
+
+TTFT means time to first token. Each timing above is the **median of three per-run
+p95 values**, not a pooled p95. The learned policy tied LFU's 83/150 hits on hot
+traffic at 32 MiB. Better reuse alone did not translate into faster inference.
+
+[Original ZIPs, per-run reports, checksums, and full results summary](benchmarks/colab-2026-10-13/README.md)
+
+### Profiling findings
+
+A separate NVIDIA T4 float32 diagnostic replayed 60 hot-prefix requests per
+strategy, once, with a 32 MiB budget. All strategies passed output checks.
+For the learned policy:
+
+| Stage | Invocations | Mean per invocation | Total |
+|---|---:|---:|---:|
+| Features + prediction | 13 | 0.18 ms | 2.30 ms |
+| Copy KV on a cache hit | 28 | 5.15 ms | 144.09 ms |
+| Copy and retain a new prefix | 32 | 6.06 ms | 193.98 ms |
+
+Prediction is nested within eviction-decision timing and must not be counted
+twice. Copying cost substantially more than prediction in this diagnostic.
+This motivates optimizing copies; it does not establish that copying explains
+every latency difference. The learned strategy had 28/60 hits versus LRU's 29/60.
+
+Stage profiling synchronizes the GPU and includes host/framework overhead. It
+changes execution timing and is **not a replacement for uninstrumented performance
+benchmarks**. Hit/miss requests can have different prefix lengths, so their mean
+prefill times are not a matched estimate of computation saved.
+
+[Profiling evidence and provenance](benchmarks/colab-2026-10-14-profile/README.md)
+
+## Run in Colab without paid APIs or Drive storage
+
+Select an available NVIDIA T4 runtime. Free GPU availability is not guaranteed.
+Choose the notebook appropriate to the experiment:
+
+| Notebook | Purpose |
+|---|---|
+| [Short correctness check](https://colab.research.google.com/github/swathiblrs/Learning-Based-KV-Cache-Management-for-GPU-LLM-Inference/blob/main/notebooks/gpu_experiment.ipynb) | 30 requests per strategy, one float32 repeat |
+| [One benchmark group at a time](https://colab.research.google.com/github/swathiblrs/Learning-Based-KV-Cache-Management-for-GPU-LLM-Inference/blob/main/notebooks/gpu_benchmark_groups.ipynb) | Choose one of six groups; download its ZIP before leaving |
+| [Full benchmark suite](https://colab.research.google.com/github/swathiblrs/Learning-Based-KV-Cache-Management-for-GPU-LLM-Inference/blob/main/notebooks/gpu_benchmark_suite.ipynb) | All 90 runs; substantially longer session |
+| [Short stage profile](https://colab.research.google.com/github/swathiblrs/Learning-Based-KV-Cache-Management-for-GPU-LLM-Inference/blob/main/notebooks/gpu_profile.ipynb) | Diagnose prediction, copying, prefill, and decode costs |
+
+The notebooks isolate inference dependencies, verify CUDA availability, and run
+tests before experiments. Benchmark reports checkpoint after completed policies;
+notebooks archive diagnostics on ordinary failures. A terminated Colab runtime
+can still lose temporary files. **Confirm the ZIP is downloaded to your laptop
+before closing the session.** No Drive mount is required.
+
+## Local setup and simulation
+
+Use Python 3.10+; macOS system Python may be too old.
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .
-python -m unittest discover -s tests -v
 kv-cache experiment --output results/experiment
+python -m unittest discover -s tests -v
 ```
 
-The experiment trains on seed 42, validates on seed 43, and tests seeds 44–46
-across three workloads and two budgets. It writes:
+The default simulator trains on seed 42, validates on 43, and tests seeds 44–46
+across three workloads and two budgets. It saves JSONL traces, predictor parameters,
+precision/recall at threshold 0.5, prevalence, Brier score, and cache metrics.
+Simulation reuse counts are not GPU latency or throughput measurements.
 
-- `predictor.json`: weights, training-only normalization, and provenance.
-- `model-evaluation.json`: precision/recall at 0.5, prevalence, and Brier score.
-- `simulation.json`: reuse, retained bytes, evictions, and host policy timing.
-- JSONL traces for replay.
-
-Simulation has **no GPU TTFT or inference-throughput result**. Reused token count
-is a proxy for prefill work avoided, not a measured FLOP count.
-
-## Validate real KV reuse on CPU
+Install inference dependencies to run all **21 tests**, including tiny-model
+correctness and profiling regressions (otherwise inference tests are skipped):
 
 ```bash
 python -m pip install -e '.[inference]'
 python -m unittest discover -s tests -v
 kv-cache benchmark --predictor results/experiment/predictor.json \
-  --tiny --device cpu --requests 30 --new-tokens 3 --repeats 1 \
-  --budget-mib 0.05 --output results/cpu-correctness.json
+  --tiny --device cpu --dtype float32 --requests 30 --new-tokens 3 \
+  --repeats 1 --budget-mib 0.05 --output results/cpu-correctness.json
 ```
 
-`--tiny` uses a randomly initialized two-layer Llama. It checks execution and
-cache semantics; its timings are **not pretrained-LLM performance evidence**.
+`--tiny` uses randomly initialized Llama weights without a model download. It
+validates execution, not pretrained-model quality or representative performance.
 
-## Run a real NVIDIA GPU experiment
+## GPU commands
 
-On an available free GPU notebook, install this repository and select a GPU
-runtime. GPU availability and service quotas are not guaranteed. Run benchmarks
-inside the notebook; this project requires no paid API or hosted endpoint.
+A short pretrained-model check (first run downloads weights):
 
 ```bash
-python -m pip install -e '.[inference]'
-kv-cache experiment --output results/experiment
 kv-cache benchmark --predictor results/experiment/predictor.json \
-  --device cuda --model HuggingFaceTB/SmolLM2-135M \
-  --requests 100 --budget-mib 4 --new-tokens 8 --repeats 3 \
-  --output results/gpu.json
+  --device cuda --dtype float32 --model HuggingFaceTB/SmolLM2-135M \
+  --requests 30 --budget-mib 4 --new-tokens 8 --repeats 1 \
+  --output results/gpu-fp32-check.json
 ```
 
-The first pretrained run downloads model weights. An unavailable CUDA device is
-an error, not a silent CPU fallback. See [the notebook](notebooks/gpu_experiment.ipynb)
-and [experiment protocol](docs/EXPERIMENTS.md).
-
-The harness replays identical inputs for all policies, shuffles policy order,
-warms up before every run, synchronizes the accelerator, and saves hardware,
-versions, dtype, model identity, input/model-artifact hashes, memory, and latency.
-It compares generated-token hashes against the no-cache path. A mismatch exits
-with an error and saves diagnostics; numerical differences must be investigated.
-
-## How the learned policy works
-
-At request t, four features describe each eviction candidate: recency, cumulative
-frequency, prefix length, and mean historical interarrival gap. Log transforms
-and normalization feed a logistic model predicting reuse within the next 32
-requests. Labels may look ahead; features never do. The final 32 training steps
-are excluded because their labels are incomplete.
-
-On a miss, all policies admit a fitting prefix and evict enough retained entries.
-The learned policy evicts the lowest estimated `P(reuse) × prefix_tokens / bytes`
-first. This is an approximate retention score, not optimal cache control. For a
-fixed full-attention model, bytes scale linearly with tokens, so that ratio
-largely cancels; length can still affect the learned probability.
-
-The cache holds independent, exact full prefixes. Active generation uses separate
-KV state and finishes before the next request. **Active KV is never evicted.**
-The byte budget covers only retained reusable KV tensors; model weights, active
-KV, cloning, inputs, and allocator overhead require additional device memory.
-
-## Scope and evidence
-
-- The first Colab T4 run completed but failed strict output equality; see the investigation below.
-- Synthetic traces/token IDs do not establish production workload or answer quality.
-- Independent test seeds prevent sequence reuse, but distributions remain synthetic.
-- Metadata grows with unique prefixes; production deployment needs bounded metadata.
-- Learned decisions scan all residents; policy cost can exceed reuse savings.
-- No speedup or generalization claim should be made until measured on relevant data.
-
-For a resume, report only measured outcomes, identify the hardware/workloads,
-and distinguish simulator results from real GPU experiments.
-
-## References
-
-- [Hugging Face cache documentation](https://huggingface.co/docs/transformers/en/kv_cache)
-- [vLLM automatic prefix caching](https://docs.vllm.ai/en/stable/features/automatic_prefix_caching/)
-- [SGLang / RadixAttention](https://lmsys.org/blog/2024-01-17-sglang/)
-
-These systems motivate the experiment; this repository is an independent,
-simplified implementation and makes no claim to invent learned caching.
-
-## Initial validation
-
-See [checked-in validation artifacts](docs/validation/README.md) for the first
-90 simulation runs and a real-KV CPU correctness smoke test. All 14 tests passed;
-These initial results predate the Colab investigation below.
-
-
-## First T4 run and corrective changes
-
-The user-provided Colab run completed 15 measurements (100 requests × five
-strategies × three repeats) on a Tesla T4 using FP16 SmolLM2-135M. All four caching
-strategies produced the same hash in every repeat; the no-cache path consistently
-produced a different hash. Raw results are preserved in
-[the failed-run artifact](docs/validation/t4-first-run.json). They are **not a
-passing correctness result** and should not support resume speedup claims.
-
-The old miss path computed prefix and suffix in separate model forwards, unlike
-the no-cache path. Misses now use one full-prompt forward, then clone/crop the
-retained prefix. This removes redundant forward overhead and aligns miss execution
-shapes. Hits still use prefix reuse, so GPU numerical discrepancies remain possible.
-FP16 rounding is a hypothesis, not a confirmed root cause from output hashes alone.
-
-The updated notebook starts with 30 requests, one repeat, and `--dtype float32`.
-All strategies use that same precision. It isolates its dependencies from Colab's
-Gradio/Diffusers environment, stops on test failures, and archives results even if
-the benchmark fails. Reload the notebook from GitHub to get these cells.
-
-New reports preserve generated token IDs, hit flags, first divergent token per
-request, and completion status. Reports checkpoint atomically after each completed
-policy. A runtime terminated mid-policy still loses that policy's unfinished work.
-Strict output checks remain enabled. A float32 pass does not prove FP16 correctness;
-repeat the same workload in FP16 separately before publishing FP16 measurements.
-
-Local regression tests and tiny-model CPU checks pass. Confirmation on the T4 is
-still required; this Mac environment cannot validate the failing CUDA path.
-
-## Extended GPU evaluation notebook
-
-After the short float32 check passes, use
-[`gpu_benchmark_suite.ipynb`](notebooks/gpu_benchmark_suite.ipynb).
-It runs 150 requests × five strategies × three repeats × three workloads × two
-retained-KV budgets (8/32 MiB): 90 runs / 13,500 request executions, four generated
-tokens each. This takes substantially longer than the short check. Workload seed
-99 is held out from training; repeats measure timing variation, not new samples.
-The suite stops on failed correctness and archives completed/partial reports.
-Abrupt session termination can still lose un-downloaded files.
+Full suite; the output directory must be new:
 
 ```bash
 python -m kv_cache.suite --output results/gpu-suite --device cuda
 ```
 
-Use a new output directory for each suite. Archives are refreshed after every
-workload/budget group and in the failure handler. Download the ZIP before a free
-runtime expires. No passing GPU result for this extended suite is claimed yet.
+One group only, using the same protocol:
 
-### Limited time or no Drive storage
+```bash
+python -m kv_cache.suite --output results/hot-32-run1 --device cuda \
+  --workloads hot --budgets 32 --requests 150 --repeats 3
+```
 
-Use [`gpu_benchmark_groups.ipynb`](notebooks/gpu_benchmark_groups.ipynb) to run
-**one selected group per session**, with live progress and a ZIP download at the
-end. Select groups 1–6 in turn; Run all executes only the selected group. Keep
-completed ZIPs on your laptop and select the next unfinished group later.
-No Drive storage is used. An unfinished group can still be lost on runtime
-termination, so confirm each download before closing your laptop. This uses the
-same 150-request / 3-repeat / float32 protocol as the full suite.
-
-## Saved Colab GPU results
-
-[All downloaded October 13 Colab results](benchmarks/colab-2026-10-13/README.md)
-are now preserved, including original ZIPs, extracted reports, checksums, and a
-CSV summary. The extended T4 float32 suite completed all 90 runs with matching
-outputs. Learned eviction sometimes improved reuse but did not demonstrate a
-performance advantage. The earlier FP16 failure remains preserved separately.
-
-## Investigate overhead
-
-[`gpu_profile.ipynb`](notebooks/gpu_profile.ipynb) runs a short diagnostic with live
-output and an immediate ZIP download. It measures lookup, prediction/eviction,
-KV copying, prefill, and decode, while preserving strict output checks. Profiling
-adds synchronization: treat these measurements as diagnostic, not new speedup
-claims. The existing uninstrumented results remain unchanged.
+Diagnostic profiling with the frozen initial predictor:
 
 ```bash
 kv-cache benchmark --predictor docs/validation/predictor.json --device cuda \
   --dtype float32 --workload hot --requests 60 --budget-mib 32 \
   --new-tokens 4 --repeats 1 --profile-stages --output results/profile.json
 ```
+
+Reports record hardware, versions, dtype, input/predictor hashes, generated tokens,
+hit flags, memory, and timings. Policy order is shuffled and each run warms up
+before timing. A correctness failure exits with an error and preserves diagnostics.
+See [measurement boundaries and methodology](docs/EXPERIMENTS.md).
+
+## Correctness investigation and limits
+
+The initial FP16 run produced consistent but different output hashes for cached
+versus uncached paths. Miss processing was changed from separate prefix/suffix
+calls to one full-input call, and per-request diagnostics were added. Subsequent
+float32 runs passed. **The original FP16 root cause remains unconfirmed, and FP16
+correctness is not established.** Neither tolerances nor output checks were relaxed.
+The [failed FP16 report](benchmarks/colab-2026-10-13/initial-fp16/reports/gpu.json)
+remains preserved alongside passing results.
+
+This is a sequential research harness, not a production inference server:
+
+- Synthetic token IDs and traces do not measure real answer quality or production generalization.
+- No continuous batching, partial-prefix matching, paged attention, custom CUDA kernels, or multi-GPU execution.
+- Metadata grows with unique prefixes; learned eviction scans resident candidates.
+- Fixed output lengths ignore EOS for comparable work and differ from real traffic.
+- GPU performance conclusions apply only to the measured model, precision, workloads, and environment.
+
+## Next work
+
+1. Reduce unnecessary KV copying while preserving immutable retained state.
+2. Test output equivalence and exact cache-budget accounting after changes.
+3. Re-run uninstrumented comparisons before claiming a performance improvement.
+4. Extend evaluation to independent workload seeds, real traces, and feature ablations.
+
+## Repository map
+
+- `src/kv_cache/`: traces, predictor, cache policies, simulator, inference, profiling, and suite runner.
+- `tests/`: policy, leakage, inference-equivalence, profiling, and failure-archive checks.
+- `notebooks/`: Colab workflows.
+- `benchmarks/`: original downloaded GPU artifacts and summaries.
+- `docs/validation/`: initial simulation and CPU validation evidence.
+
+## References
+
+- [Hugging Face KV-cache documentation](https://huggingface.co/docs/transformers/en/kv_cache)
+- [vLLM automatic prefix caching](https://docs.vllm.ai/en/stable/features/automatic_prefix_caching/)
+- [SGLang / RadixAttention](https://lmsys.org/blog/2024-01-17-sglang/)
+
+The project evaluates a simplified learned policy; it does not claim to invent
+prefix caching or learned eviction.

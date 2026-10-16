@@ -1,0 +1,5944 @@
+{
+  "schema": 2,
+  "complete": true,
+  "expected_runs": 5,
+  "trace_sha256": "19f30da15b6ab0e9ac1805debfc4004d7dae8af937387a126e0fcc810c68e5b0",
+  "seed": 99,
+  "requested_dtype": "float32",
+  "profile_stages": true,
+  "workload": "hot",
+  "predictor_sha256": "76bb1fdd313aa16e2ab682cf99a71415ffa9b6005917aa6c49b9a9663fc53f00",
+  "greedy_outputs_match": true,
+  "correctness": {
+    "status": "passed",
+    "mismatches": []
+  },
+  "runs": [
+    {
+      "kind": "real_model_profile",
+      "profiling": {
+        "method": "synchronized host wall time",
+        "timing_is_instrumented": true,
+        "note": "Stage synchronization changes runtime. prediction is nested inside eviction_decision; do not sum both. Absent stages are not called, not zero-cost observations.",
+        "summary": {
+          "cache_lookup": {
+            "calls": 60,
+            "total_ms": 0.9751239995807737,
+            "mean_ms": 0.01625206665967956,
+            "p95_ms": 0.02582990000519202
+          },
+          "decode": {
+            "calls": 60,
+            "total_ms": 5899.0358119997945,
+            "mean_ms": 98.3172635333299,
+            "p95_ms": 120.66513549997067
+          },
+          "eviction_decision": {
+            "calls": 31,
+            "total_ms": 3.0751410000675605,
+            "mean_ms": 0.09919809677637292,
+            "p95_ms": 0.20908200002622834
+          },
+          "first_token_selection": {
+            "calls": 60,
+            "total_ms": 16.85889899988524,
+            "mean_ms": 0.28098164999808733,
+            "p95_ms": 0.10195710001710265
+          },
+          "full_prefill": {
+            "calls": 31,
+            "total_ms": 1201.8867690001116,
+            "mean_ms": 38.77054093548747,
+            "p95_ms": 52.737831499996446
+          },
+          "hit_cache_copy": {
+            "calls": 29,
+            "total_ms": 145.04630100009308,
+            "mean_ms": 5.001596586210106,
+            "p95_ms": 6.622215800030061
+          },
+          "hit_suffix_prefill": {
+            "calls": 29,
+            "total_ms": 1049.284905000036,
+            "mean_ms": 36.182238103449514,
+            "p95_ms": 47.718759399981536
+          },
+          "retain_prefix_copy": {
+            "calls": 31,
+            "total_ms": 190.4182559999299,
+            "mean_ms": 6.142524387094513,
+            "p95_ms": 7.313994499980936
+          }
+        },
+        "requests": [
+          {
+            "request_index": 0,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.021966000019801868,
+              "eviction_decision": 0.014609999993808742,
+              "full_prefill": 37.61751600001162,
+              "retain_prefix_copy": 6.215885000017352,
+              "first_token_selection": 11.595069000009062,
+              "decode": 179.22688999999536
+            }
+          },
+          {
+            "request_index": 1,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.018254999986311304,
+              "eviction_decision": 0.013311999964571442,
+              "full_prefill": 36.73358800000415,
+              "retain_prefix_copy": 7.0935759999883885,
+              "first_token_selection": 0.0866899999891757,
+              "decode": 95.19573599999376
+            }
+          },
+          {
+            "request_index": 2,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012931000014759775,
+              "eviction_decision": 0.010266999993291392,
+              "full_prefill": 36.13048900001559,
+              "retain_prefix_copy": 6.564289000039025,
+              "first_token_selection": 0.09952600004226042,
+              "decode": 100.73720600001934
+            }
+          },
+          {
+            "request_index": 3,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013025999976434832,
+              "eviction_decision": 0.011379000000033557,
+              "full_prefill": 55.57203200004324,
+              "retain_prefix_copy": 6.4765939999915645,
+              "first_token_selection": 0.09373299997150752,
+              "decode": 95.06463899998607
+            }
+          },
+          {
+            "request_index": 4,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.015211000004455855,
+              "hit_cache_copy": 4.4200140000043575,
+              "hit_suffix_prefill": 53.2613260000403,
+              "first_token_selection": 0.09226499997794235,
+              "decode": 97.99791500000765
+            }
+          },
+          {
+            "request_index": 5,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.017135000007328927,
+              "hit_cache_copy": 5.117131000019981,
+              "hit_suffix_prefill": 36.24281200001178,
+              "first_token_selection": 0.09678100002474821,
+              "decode": 98.3865249999667
+            }
+          },
+          {
+            "request_index": 6,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01412199998185315,
+              "eviction_decision": 0.011565000022528693,
+              "full_prefill": 49.589549000017996,
+              "retain_prefix_copy": 6.919410999955744,
+              "first_token_selection": 0.09385799995698108,
+              "decode": 92.86378000001605
+            }
+          },
+          {
+            "request_index": 7,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013856999999006803,
+              "hit_cache_copy": 4.564404999996441,
+              "hit_suffix_prefill": 37.1989690000305,
+              "first_token_selection": 0.11062300001185577,
+              "decode": 99.93133900002249
+            }
+          },
+          {
+            "request_index": 8,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.05422300000645919,
+              "eviction_decision": 0.18637400000898197,
+              "full_prefill": 44.77613599999586,
+              "retain_prefix_copy": 5.452485000034812,
+              "first_token_selection": 0.07614700001568053,
+              "decode": 93.91261000001805
+            }
+          },
+          {
+            "request_index": 9,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013558999967244745,
+              "eviction_decision": 0.010802000019793923,
+              "full_prefill": 36.66691699999092,
+              "retain_prefix_copy": 5.579783000030147,
+              "first_token_selection": 0.08107399997925313,
+              "decode": 91.9576389999861
+            }
+          },
+          {
+            "request_index": 10,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013294000041241816,
+              "eviction_decision": 0.13575400004128824,
+              "full_prefill": 36.056061000010686,
+              "retain_prefix_copy": 5.388211999957093,
+              "first_token_selection": 0.07991500001480745,
+              "decode": 96.41723700002558
+            }
+          },
+          {
+            "request_index": 11,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014479000014944177,
+              "hit_cache_copy": 4.541169000049194,
+              "hit_suffix_prefill": 39.834656999971685,
+              "first_token_selection": 0.08404400000472378,
+              "decode": 92.67271400000254
+            }
+          },
+          {
+            "request_index": 12,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01432799996337053,
+              "hit_cache_copy": 4.714872999954878,
+              "hit_suffix_prefill": 33.81576399999631,
+              "first_token_selection": 0.08338800000728952,
+              "decode": 92.84006699999736
+            }
+          },
+          {
+            "request_index": 13,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012599000001500826,
+              "eviction_decision": 0.14833000000180618,
+              "full_prefill": 34.23468699998011,
+              "retain_prefix_copy": 5.824986999982684,
+              "first_token_selection": 0.07955300003459342,
+              "decode": 117.26583099999743
+            }
+          },
+          {
+            "request_index": 14,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.016170999970199773,
+              "hit_cache_copy": 5.742454999960955,
+              "hit_suffix_prefill": 38.799707000009676,
+              "first_token_selection": 0.09349399999791785,
+              "decode": 123.8421919999837
+            }
+          },
+          {
+            "request_index": 15,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014196999984505965,
+              "eviction_decision": 0.11478999999781081,
+              "full_prefill": 43.930447000036565,
+              "retain_prefix_copy": 6.248973000026581,
+              "first_token_selection": 0.08228299998336297,
+              "decode": 99.06346100001429
+            }
+          },
+          {
+            "request_index": 16,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013531999968563468,
+              "hit_cache_copy": 4.7489519999999175,
+              "hit_suffix_prefill": 33.416020999993634,
+              "first_token_selection": 0.09072799997511538,
+              "decode": 91.69343399997842
+            }
+          },
+          {
+            "request_index": 17,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014453999995112099,
+              "eviction_decision": 0.1143659999911506,
+              "full_prefill": 36.064092999993136,
+              "retain_prefix_copy": 7.433311999989201,
+              "first_token_selection": 0.093690999960927,
+              "decode": 96.75621700000647
+            }
+          },
+          {
+            "request_index": 18,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01952499997059931,
+              "hit_cache_copy": 8.333712000023752,
+              "hit_suffix_prefill": 43.6103170000024,
+              "first_token_selection": 0.0850710000008803,
+              "decode": 90.74822200000199
+            }
+          },
+          {
+            "request_index": 19,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013303000002906629,
+              "eviction_decision": 0.1590930000361368,
+              "full_prefill": 34.819873000003554,
+              "retain_prefix_copy": 5.513971999960177,
+              "first_token_selection": 0.08075499999904423,
+              "decode": 91.23576700000058
+            }
+          },
+          {
+            "request_index": 20,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014727999996466679,
+              "eviction_decision": 0.11323299997911818,
+              "full_prefill": 35.533582999960345,
+              "retain_prefix_copy": 5.577376000019285,
+              "first_token_selection": 0.09070600003724394,
+              "decode": 95.04835400002776
+            }
+          },
+          {
+            "request_index": 21,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01366699996196985,
+              "eviction_decision": 0.12580399999251313,
+              "full_prefill": 35.33358599997882,
+              "retain_prefix_copy": 6.0723290000055385,
+              "first_token_selection": 0.08225099998071528,
+              "decode": 102.49737800000958
+            }
+          },
+          {
+            "request_index": 22,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.044172000002618006,
+              "hit_cache_copy": 6.892007000033118,
+              "hit_suffix_prefill": 33.22484099999201,
+              "first_token_selection": 0.08489900000085981,
+              "decode": 90.96976600000062
+            }
+          },
+          {
+            "request_index": 23,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012838999964515097,
+              "eviction_decision": 0.010028000019701722,
+              "full_prefill": 34.80978900000764,
+              "retain_prefix_copy": 5.640145999961987,
+              "first_token_selection": 0.08244399998602603,
+              "decode": 90.42907899998909
+            }
+          },
+          {
+            "request_index": 24,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.012783999977727944,
+              "hit_cache_copy": 4.487253000036162,
+              "hit_suffix_prefill": 31.90484499998547,
+              "first_token_selection": 0.08583099997849786,
+              "decode": 90.33214499999076
+            }
+          },
+          {
+            "request_index": 25,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.02564400000437672,
+              "eviction_decision": 0.024794000012207107,
+              "full_prefill": 34.51660700000048,
+              "retain_prefix_copy": 6.06675799997447,
+              "first_token_selection": 0.08110699997132542,
+              "decode": 95.40244300001177
+            }
+          },
+          {
+            "request_index": 26,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013437000006888411,
+              "hit_cache_copy": 4.44062600001871,
+              "hit_suffix_prefill": 32.61573800000406,
+              "first_token_selection": 0.09340999997675681,
+              "decode": 89.88510099999303
+            }
+          },
+          {
+            "request_index": 27,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013751999972555495,
+              "hit_cache_copy": 4.645570000036514,
+              "hit_suffix_prefill": 32.14703200001168,
+              "first_token_selection": 0.08080699996071417,
+              "decode": 90.88744100000667
+            }
+          },
+          {
+            "request_index": 28,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013249999994968675,
+              "eviction_decision": 0.010579999980109278,
+              "full_prefill": 37.491288000012446,
+              "retain_prefix_copy": 7.167369000001145,
+              "first_token_selection": 0.09236799996870104,
+              "decode": 102.98399300000938
+            }
+          },
+          {
+            "request_index": 29,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.017045000049620285,
+              "eviction_decision": 0.15460399998801222,
+              "full_prefill": 50.51207299999305,
+              "retain_prefix_copy": 6.511071000034008,
+              "first_token_selection": 0.0898170000027676,
+              "decode": 120.49792199997
+            }
+          },
+          {
+            "request_index": 30,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01496599998063175,
+              "eviction_decision": 0.012588999993567995,
+              "full_prefill": 38.62806299997601,
+              "retain_prefix_copy": 6.063380999989931,
+              "first_token_selection": 0.09162300000298274,
+              "decode": 95.87970799998402
+            }
+          },
+          {
+            "request_index": 31,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012691999984326685,
+              "eviction_decision": 0.22054700002627214,
+              "full_prefill": 37.65424499999881,
+              "retain_prefix_copy": 6.210737000003519,
+              "first_token_selection": 0.09290399998462817,
+              "decode": 105.3764160000128
+            }
+          },
+          {
+            "request_index": 32,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.015348999966136034,
+              "hit_cache_copy": 5.210176999980831,
+              "hit_suffix_prefill": 36.656162999975095,
+              "first_token_selection": 0.09685600002740102,
+              "decode": 95.58919099998775
+            }
+          },
+          {
+            "request_index": 33,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012591999961841793,
+              "eviction_decision": 0.19761700002618454,
+              "full_prefill": 35.55303399997456,
+              "retain_prefix_copy": 5.444724999961181,
+              "first_token_selection": 0.08488999998235158,
+              "decode": 91.37550299999475
+            }
+          },
+          {
+            "request_index": 34,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014432000000397238,
+              "eviction_decision": 0.13609000001224558,
+              "full_prefill": 34.72542100001874,
+              "retain_prefix_copy": 5.560212999967007,
+              "first_token_selection": 0.07992000001877386,
+              "decode": 91.48939499999642
+            }
+          },
+          {
+            "request_index": 35,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014495999948849203,
+              "hit_cache_copy": 4.7455399999876136,
+              "hit_suffix_prefill": 35.32164900002499,
+              "first_token_selection": 0.0978369999984352,
+              "decode": 94.83302099999946
+            }
+          },
+          {
+            "request_index": 36,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.0293620000206829,
+              "hit_cache_copy": 4.496592000009514,
+              "hit_suffix_prefill": 32.74173200003361,
+              "first_token_selection": 0.08914599999343409,
+              "decode": 104.02510699998402
+            }
+          },
+          {
+            "request_index": 37,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013958000010916294,
+              "hit_cache_copy": 4.787599999986014,
+              "hit_suffix_prefill": 34.111712999958854,
+              "first_token_selection": 0.09044499995525257,
+              "decode": 90.60785700000906
+            }
+          },
+          {
+            "request_index": 38,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014109000005646521,
+              "hit_cache_copy": 4.761339999959091,
+              "hit_suffix_prefill": 32.46825500002615,
+              "first_token_selection": 0.09772300001031908,
+              "decode": 89.62139999999863
+            }
+          },
+          {
+            "request_index": 39,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014468000017586746,
+              "eviction_decision": 0.1545260000170856,
+              "full_prefill": 36.24747000003481,
+              "retain_prefix_copy": 5.571575999965717,
+              "first_token_selection": 0.08560000003399182,
+              "decode": 94.9879749999809
+            }
+          },
+          {
+            "request_index": 40,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012384000001475215,
+              "eviction_decision": 0.11355899999898611,
+              "full_prefill": 35.22065999999313,
+              "retain_prefix_copy": 5.428294000012102,
+              "first_token_selection": 0.08116899999777161,
+              "decode": 92.10436300003266
+            }
+          },
+          {
+            "request_index": 41,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013895999984470109,
+              "hit_cache_copy": 4.729639999993651,
+              "hit_suffix_prefill": 32.61481200001981,
+              "first_token_selection": 0.08475099997440338,
+              "decode": 91.70261700000992
+            }
+          },
+          {
+            "request_index": 42,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014661000022897497,
+              "eviction_decision": 0.010766999992029014,
+              "full_prefill": 35.82977499996787,
+              "retain_prefix_copy": 7.813988999998855,
+              "first_token_selection": 0.11955700000498837,
+              "decode": 144.0447479999989
+            }
+          },
+          {
+            "request_index": 43,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013548999959311914,
+              "eviction_decision": 0.011131999997360253,
+              "full_prefill": 38.718024000047535,
+              "retain_prefix_copy": 5.729217999999037,
+              "first_token_selection": 0.09957399998938854,
+              "decode": 93.740017000016
+            }
+          },
+          {
+            "request_index": 44,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01493000002028566,
+              "hit_cache_copy": 4.4772489999900245,
+              "hit_suffix_prefill": 47.57342499999595,
+              "first_token_selection": 0.09638500000619388,
+              "decode": 93.26296400001866
+            }
+          },
+          {
+            "request_index": 45,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013824000006934511,
+              "hit_cache_copy": 4.719665000038731,
+              "hit_suffix_prefill": 33.10550000003332,
+              "first_token_selection": 0.08768499998268453,
+              "decode": 90.7243099999846
+            }
+          },
+          {
+            "request_index": 46,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013787000000320404,
+              "hit_cache_copy": 4.803954000010435,
+              "hit_suffix_prefill": 34.144625000010365,
+              "first_token_selection": 0.09049199996979951,
+              "decode": 97.7068849999796
+            }
+          },
+          {
+            "request_index": 47,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.0138599999672806,
+              "eviction_decision": 0.43556800000033036,
+              "full_prefill": 54.96358999999984,
+              "retain_prefix_copy": 5.762165000021469,
+              "first_token_selection": 0.09289000001899694,
+              "decode": 93.02264099994773
+            }
+          },
+          {
+            "request_index": 48,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014585999963401264,
+              "hit_cache_copy": 4.688239000017802,
+              "hit_suffix_prefill": 32.89931399996249,
+              "first_token_selection": 0.09078600004386317,
+              "decode": 92.77532199996585
+            }
+          },
+          {
+            "request_index": 49,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.015367999992577097,
+              "hit_cache_copy": 4.843222999966201,
+              "hit_suffix_prefill": 32.962146999977904,
+              "first_token_selection": 0.08490800001936805,
+              "decode": 93.51763899996968
+            }
+          },
+          {
+            "request_index": 50,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01479500002687928,
+              "hit_cache_copy": 4.712166999979672,
+              "hit_suffix_prefill": 34.05961200002139,
+              "first_token_selection": 0.08795400003691611,
+              "decode": 94.27441199994746
+            }
+          },
+          {
+            "request_index": 51,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014197999973930564,
+              "hit_cache_copy": 4.669027000034021,
+              "hit_suffix_prefill": 34.244031000014274,
+              "first_token_selection": 0.08124400000042442,
+              "decode": 111.13515199997437
+            }
+          },
+          {
+            "request_index": 52,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.015173999997841747,
+              "eviction_decision": 0.011729999982890149,
+              "full_prefill": 37.52285899997787,
+              "retain_prefix_copy": 5.91886400002295,
+              "first_token_selection": 0.08469399995192362,
+              "decode": 92.53904199999852
+            }
+          },
+          {
+            "request_index": 53,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.015413999960856017,
+              "eviction_decision": 0.12504500000432017,
+              "full_prefill": 35.66234400000212,
+              "retain_prefix_copy": 7.194676999972671,
+              "first_token_selection": 0.08523500002866058,
+              "decode": 102.19335499999715
+            }
+          },
+          {
+            "request_index": 54,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.016074999962256697,
+              "hit_cache_copy": 5.063859999950182,
+              "hit_suffix_prefill": 32.88059399994836,
+              "first_token_selection": 0.08413799997697424,
+              "decode": 93.55789500000355
+            }
+          },
+          {
+            "request_index": 55,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.015474000008453004,
+              "hit_cache_copy": 4.649988000039684,
+              "hit_suffix_prefill": 32.97394300000178,
+              "first_token_selection": 0.10000700001455698,
+              "decode": 91.47614299996576
+            }
+          },
+          {
+            "request_index": 56,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013021000029311836,
+              "eviction_decision": 0.1430589999813492,
+              "full_prefill": 36.386301000050025,
+              "retain_prefix_copy": 5.688528000007409,
+              "first_token_selection": 0.08083700004135608,
+              "decode": 93.39667500000814
+            }
+          },
+          {
+            "request_index": 57,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.016533999996681814,
+              "hit_cache_copy": 4.822343999990153,
+              "hit_suffix_prefill": 36.63971200001015,
+              "first_token_selection": 0.10150100001737883,
+              "decode": 94.01178499996377
+            }
+          },
+          {
+            "request_index": 58,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013890999980503693,
+              "eviction_decision": 0.13322699999207543,
+              "full_prefill": 34.38666900001408,
+              "retain_prefix_copy": 6.285361000038847,
+              "first_token_selection": 0.08337100001654107,
+              "decode": 90.94653300002165
+            }
+          },
+          {
+            "request_index": 59,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.02179400001978138,
+              "hit_cache_copy": 6.217529000025479,
+              "hit_suffix_prefill": 47.81564899997193,
+              "first_token_selection": 0.09244899996474487,
+              "decode": 92.37469800001463
+            }
+          }
+        ]
+      },
+      "device": "cuda",
+      "policy": "lru",
+      "requests": 60,
+      "model_type": "llama",
+      "random_weights": false,
+      "torch_version": "2.11.0+cu130",
+      "transformers_version": "4.57.6",
+      "hardware": "Tesla T4",
+      "dtype": "torch.float32",
+      "batch_size": 1,
+      "concurrency": 1,
+      "fixed_output_tokens": 4,
+      "hits": 29,
+      "hit_rate": 0.48333333333333334,
+      "reused_prefix_tokens": 2880,
+      "prefix_token_reuse_rate": 0.4864864864864865,
+      "ttft_p50_ms": 41.70649149997985,
+      "ttft_p95_ms": 57.45685419999518,
+      "request_p95_ms": 169.13766030000372,
+      "measured_requests_per_second": 7.046501719722508,
+      "measured_output_tokens_per_second": 28.186006878890034,
+      "retained_peak_bytes": 32440320,
+      "cache_budget_bytes": 33554432,
+      "cuda_peak_allocated_bytes": 651632128,
+      "eviction_decision_p95_ms": 0.190567499998906,
+      "cache_hit_by_request": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true,
+        false,
+        false,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+        true
+      ],
+      "generated_token_ids": [
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          8262,
+          274,
+          86,
+          2178
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          8262,
+          8262,
+          8262,
+          8262
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          43284,
+          43284,
+          43284,
+          43284
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          6,
+          47224,
+          47224,
+          31390
+        ],
+        [
+          47224,
+          28,
+          3297,
+          28
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          47224,
+          28,
+          3297,
+          28
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          26649,
+          272,
+          24014,
+          67
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          26649,
+          456,
+          6322,
+          9578
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          26649,
+          456,
+          6322,
+          9578
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          2660,
+          739,
+          2660,
+          739
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          26649,
+          456,
+          10426,
+          456
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          6,
+          47224,
+          47224,
+          31390
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ]
+      ],
+      "output_sha256": "7aec2183cf154ab976bdf98508a4559f35375eb11dd87508daf598a6b301c8b6",
+      "evictions": 23,
+      "repeat": 0,
+      "model": "HuggingFaceTB/SmolLM2-135M"
+    },
+    {
+      "kind": "real_model_profile",
+      "profiling": {
+        "method": "synchronized host wall time",
+        "timing_is_instrumented": true,
+        "note": "Stage synchronization changes runtime. prediction is nested inside eviction_decision; do not sum both. Absent stages are not called, not zero-cost observations.",
+        "summary": {
+          "cache_lookup": {
+            "calls": 60,
+            "total_ms": 0.873223999747097,
+            "mean_ms": 0.014553733329118282,
+            "p95_ms": 0.021321950009678393
+          },
+          "decode": {
+            "calls": 60,
+            "total_ms": 5846.179463999704,
+            "mean_ms": 97.43632439999507,
+            "p95_ms": 113.46226659998706
+          },
+          "first_token_selection": {
+            "calls": 60,
+            "total_ms": 5.36305700001094,
+            "mean_ms": 0.08938428333351567,
+            "p95_ms": 0.10857344997532437
+          },
+          "full_prefill": {
+            "calls": 60,
+            "total_ms": 2271.3156069997353,
+            "mean_ms": 37.85526011666226,
+            "p95_ms": 44.521181499987954
+          }
+        },
+        "requests": [
+          {
+            "request_index": 0,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012300000037157588,
+              "full_prefill": 36.28227900003367,
+              "first_token_selection": 0.09772199996405107,
+              "decode": 91.59636599997611
+            }
+          },
+          {
+            "request_index": 1,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01175099998818041,
+              "full_prefill": 35.655285000018466,
+              "first_token_selection": 0.0911879999989651,
+              "decode": 92.84049299998287
+            }
+          },
+          {
+            "request_index": 2,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.011937000010675547,
+              "full_prefill": 39.98309799999333,
+              "first_token_selection": 0.0871770000117067,
+              "decode": 96.50883099999419
+            }
+          },
+          {
+            "request_index": 3,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012929999968491757,
+              "full_prefill": 47.661165000022265,
+              "first_token_selection": 0.10888599996405901,
+              "decode": 92.1598229999745
+            }
+          },
+          {
+            "request_index": 4,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013069999965864554,
+              "full_prefill": 37.788379000005534,
+              "first_token_selection": 0.0989279999998871,
+              "decode": 107.6518219999798
+            }
+          },
+          {
+            "request_index": 5,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013147000004209985,
+              "full_prefill": 38.9888289999476,
+              "first_token_selection": 0.08686500001431341,
+              "decode": 93.19830399999773
+            }
+          },
+          {
+            "request_index": 6,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012951000030625437,
+              "full_prefill": 44.44125999998505,
+              "first_token_selection": 0.09808800001565032,
+              "decode": 94.2254170000183
+            }
+          },
+          {
+            "request_index": 7,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.015077000000474072,
+              "full_prefill": 36.00072300002921,
+              "first_token_selection": 0.08251500003098045,
+              "decode": 96.39856499995858
+            }
+          },
+          {
+            "request_index": 8,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013201000001572538,
+              "full_prefill": 40.247996999994484,
+              "first_token_selection": 0.09711400002743176,
+              "decode": 95.96426999996766
+            }
+          },
+          {
+            "request_index": 9,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013325999987046089,
+              "full_prefill": 37.411551999980475,
+              "first_token_selection": 0.09491200000866229,
+              "decode": 97.48118799996064
+            }
+          },
+          {
+            "request_index": 10,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014021000026787078,
+              "full_prefill": 36.364442999968105,
+              "first_token_selection": 0.0859169999785081,
+              "decode": 113.45257599998604
+            }
+          },
+          {
+            "request_index": 11,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014725999960774061,
+              "full_prefill": 36.40287100000705,
+              "first_token_selection": 0.10661699997172036,
+              "decode": 114.99844100001155
+            }
+          },
+          {
+            "request_index": 12,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.016099000049507595,
+              "full_prefill": 40.79612099997121,
+              "first_token_selection": 0.09310699999787175,
+              "decode": 94.82207999997172
+            }
+          },
+          {
+            "request_index": 13,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013027999955284031,
+              "full_prefill": 35.25365299998384,
+              "first_token_selection": 0.07938600003853935,
+              "decode": 103.9369109999484
+            }
+          },
+          {
+            "request_index": 14,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014773000032164418,
+              "full_prefill": 41.13381499996649,
+              "first_token_selection": 0.09317300003885975,
+              "decode": 100.58540900001844
+            }
+          },
+          {
+            "request_index": 15,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013910000006944756,
+              "full_prefill": 42.15124099999912,
+              "first_token_selection": 0.07881499999484731,
+              "decode": 99.13159499996027
+            }
+          },
+          {
+            "request_index": 16,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014332999967336946,
+              "full_prefill": 41.87994599999456,
+              "first_token_selection": 0.09831199997734075,
+              "decode": 96.70902099998102
+            }
+          },
+          {
+            "request_index": 17,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014608000014959543,
+              "full_prefill": 33.81616500001883,
+              "first_token_selection": 0.0975860000380635,
+              "decode": 89.11796500001401
+            }
+          },
+          {
+            "request_index": 18,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013569000032020995,
+              "full_prefill": 34.355102000006355,
+              "first_token_selection": 0.0752269999679811,
+              "decode": 109.43625599998086
+            }
+          },
+          {
+            "request_index": 19,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01397300002281554,
+              "full_prefill": 36.871170999972946,
+              "first_token_selection": 0.09823499999583873,
+              "decode": 104.27487300000848
+            }
+          },
+          {
+            "request_index": 20,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014200000009623182,
+              "full_prefill": 36.691229999973984,
+              "first_token_selection": 0.07510600005389279,
+              "decode": 97.33296299998528
+            }
+          },
+          {
+            "request_index": 21,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013222999996287399,
+              "full_prefill": 33.7695540000027,
+              "first_token_selection": 0.0749750000181848,
+              "decode": 90.96749899998713
+            }
+          },
+          {
+            "request_index": 22,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013965999983156507,
+              "full_prefill": 33.817270999975335,
+              "first_token_selection": 0.07524300002614837,
+              "decode": 91.1919050000165
+            }
+          },
+          {
+            "request_index": 23,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013867999996364233,
+              "full_prefill": 34.72485399998959,
+              "first_token_selection": 0.07449000003134643,
+              "decode": 110.8051909999972
+            }
+          },
+          {
+            "request_index": 24,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014552999971328973,
+              "full_prefill": 36.06056199998875,
+              "first_token_selection": 0.08580000002211818,
+              "decode": 94.3730619999883
+            }
+          },
+          {
+            "request_index": 25,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01212799998029368,
+              "full_prefill": 35.620949000019664,
+              "first_token_selection": 0.07677400003558432,
+              "decode": 94.05041600001596
+            }
+          },
+          {
+            "request_index": 26,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014093999993747275,
+              "full_prefill": 36.538828999994166,
+              "first_token_selection": 0.08223599996881603,
+              "decode": 92.49259199998505
+            }
+          },
+          {
+            "request_index": 27,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014433999979246437,
+              "full_prefill": 48.60528599999725,
+              "first_token_selection": 0.08508000001938854,
+              "decode": 94.87778599998364
+            }
+          },
+          {
+            "request_index": 28,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013986999988446769,
+              "full_prefill": 40.72859499996184,
+              "first_token_selection": 0.07698799998934192,
+              "decode": 93.83645499997328
+            }
+          },
+          {
+            "request_index": 29,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014937999992525874,
+              "full_prefill": 42.990021999969485,
+              "first_token_selection": 0.08646899999575908,
+              "decode": 92.96935300000086
+            }
+          },
+          {
+            "request_index": 30,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01209200001994759,
+              "full_prefill": 34.02239400003282,
+              "first_token_selection": 0.08643000001029577,
+              "decode": 93.67755699997815
+            }
+          },
+          {
+            "request_index": 31,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013319000004230475,
+              "full_prefill": 37.11862500000507,
+              "first_token_selection": 0.08103800001890704,
+              "decode": 91.58164199999419
+            }
+          },
+          {
+            "request_index": 32,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013487999979133747,
+              "full_prefill": 35.37218600001779,
+              "first_token_selection": 0.09962999996560029,
+              "decode": 93.15082099999472
+            }
+          },
+          {
+            "request_index": 33,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.021150000009129144,
+              "full_prefill": 35.91318899998441,
+              "first_token_selection": 0.10855699997591728,
+              "decode": 96.10477200004652
+            }
+          },
+          {
+            "request_index": 34,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014960999976665335,
+              "full_prefill": 35.094753999999284,
+              "first_token_selection": 0.08062900002414608,
+              "decode": 108.95654700004798
+            }
+          },
+          {
+            "request_index": 35,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013504999969882192,
+              "full_prefill": 38.61657300001298,
+              "first_token_selection": 0.08422900003779432,
+              "decode": 98.42327100000148
+            }
+          },
+          {
+            "request_index": 36,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01355200004127255,
+              "full_prefill": 35.286957999971946,
+              "first_token_selection": 0.08388699995975912,
+              "decode": 94.17993799996793
+            }
+          },
+          {
+            "request_index": 37,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01302700002270285,
+              "full_prefill": 35.147821999998996,
+              "first_token_selection": 0.0813080000057198,
+              "decode": 92.67870299999004
+            }
+          },
+          {
+            "request_index": 38,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013878999993721663,
+              "full_prefill": 35.422834000030434,
+              "first_token_selection": 0.08253299995431007,
+              "decode": 96.17122500003461
+            }
+          },
+          {
+            "request_index": 39,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01362199998311553,
+              "full_prefill": 35.999043000003894,
+              "first_token_selection": 0.0872479999998177,
+              "decode": 95.45644000002085
+            }
+          },
+          {
+            "request_index": 40,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014868999983264075,
+              "full_prefill": 36.34088699999438,
+              "first_token_selection": 0.08241199998337834,
+              "decode": 92.3005020000005
+            }
+          },
+          {
+            "request_index": 41,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.02711599995564029,
+              "full_prefill": 37.95623199999909,
+              "first_token_selection": 0.08676999999579493,
+              "decode": 94.54648399997723
+            }
+          },
+          {
+            "request_index": 42,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013471999977809901,
+              "full_prefill": 37.71624000000884,
+              "first_token_selection": 0.08365100001128667,
+              "decode": 109.11227499997267
+            }
+          },
+          {
+            "request_index": 43,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012669999989611824,
+              "full_prefill": 42.58779099995991,
+              "first_token_selection": 0.09095000001480003,
+              "decode": 93.68728300000839
+            }
+          },
+          {
+            "request_index": 44,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.020258999995803606,
+              "full_prefill": 36.05031699999017,
+              "first_token_selection": 0.10280300000431453,
+              "decode": 92.80237000001534
+            }
+          },
+          {
+            "request_index": 45,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013178000017433078,
+              "full_prefill": 34.81919600000083,
+              "first_token_selection": 0.09341699995957242,
+              "decode": 93.52766699998938
+            }
+          },
+          {
+            "request_index": 46,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013545000001613516,
+              "full_prefill": 43.55287399999952,
+              "first_token_selection": 0.10699000000613523,
+              "decode": 93.56845899998234
+            }
+          },
+          {
+            "request_index": 47,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012912999977743311,
+              "full_prefill": 46.039690000043265,
+              "first_token_selection": 0.09464200002184953,
+              "decode": 90.54383000000144
+            }
+          },
+          {
+            "request_index": 48,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012299999980314169,
+              "full_prefill": 34.6163599999727,
+              "first_token_selection": 0.0822210000137602,
+              "decode": 97.98180500001763
+            }
+          },
+          {
+            "request_index": 49,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.015543000017714803,
+              "full_prefill": 34.287156999994295,
+              "first_token_selection": 0.09318299998994917,
+              "decode": 92.87874599999668
+            }
+          },
+          {
+            "request_index": 50,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.024589000020114327,
+              "full_prefill": 42.801881000002595,
+              "first_token_selection": 0.12462099999765996,
+              "decode": 104.16353200002959
+            }
+          },
+          {
+            "request_index": 51,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013572999989719392,
+              "full_prefill": 35.212819999969724,
+              "first_token_selection": 0.07904800003188939,
+              "decode": 89.48093699996207
+            }
+          },
+          {
+            "request_index": 52,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01250299999355775,
+              "full_prefill": 34.16513100000884,
+              "first_token_selection": 0.08603099996662422,
+              "decode": 88.69013000003179
+            }
+          },
+          {
+            "request_index": 53,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013750999983130896,
+              "full_prefill": 35.361856999998054,
+              "first_token_selection": 0.08805199996686497,
+              "decode": 90.43856300002062
+            }
+          },
+          {
+            "request_index": 54,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013847999980498571,
+              "full_prefill": 41.710668000007445,
+              "first_token_selection": 0.11442900000702139,
+              "decode": 137.09072099999275
+            }
+          },
+          {
+            "request_index": 55,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014663000001746695,
+              "full_prefill": 40.91799100001481,
+              "first_token_selection": 0.08613799997192473,
+              "decode": 96.47038100001737
+            }
+          },
+          {
+            "request_index": 56,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012859999969805358,
+              "full_prefill": 35.2714890000243,
+              "first_token_selection": 0.08587399997850298,
+              "decode": 91.09717100000125
+            }
+          },
+          {
+            "request_index": 57,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013185999989673292,
+              "full_prefill": 40.75113099997907,
+              "first_token_selection": 0.09680699997716147,
+              "decode": 113.64638800000648
+            }
+          },
+          {
+            "request_index": 58,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013932999991084216,
+              "full_prefill": 35.67087799996216,
+              "first_token_selection": 0.0828219999675639,
+              "decode": 93.17260899996427
+            }
+          },
+          {
+            "request_index": 59,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.02973699997710355,
+              "full_prefill": 34.45839199997636,
+              "first_token_selection": 0.08377599999676022,
+              "decode": 93.21126700001514
+            }
+          }
+        ]
+      },
+      "device": "cuda",
+      "policy": "none",
+      "requests": 60,
+      "model_type": "llama",
+      "random_weights": false,
+      "torch_version": "2.11.0+cu130",
+      "transformers_version": "4.57.6",
+      "hardware": "Tesla T4",
+      "dtype": "torch.float32",
+      "batch_size": 1,
+      "concurrency": 1,
+      "fixed_output_tokens": 4,
+      "hits": 0,
+      "hit_rate": 0.0,
+      "reused_prefix_tokens": 0,
+      "prefix_token_reuse_rate": 0.0,
+      "ttft_p50_ms": 36.52364100000227,
+      "ttft_p95_ms": 44.72478394999654,
+      "request_p95_ms": 150.10657350000542,
+      "measured_requests_per_second": 7.379728107223387,
+      "measured_output_tokens_per_second": 29.518912428893547,
+      "retained_peak_bytes": 0,
+      "cache_budget_bytes": 33554432,
+      "cuda_peak_allocated_bytes": 620666368,
+      "eviction_decision_p95_ms": 0,
+      "cache_hit_by_request": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "generated_token_ids": [
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          8262,
+          274,
+          86,
+          2178
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          8262,
+          8262,
+          8262,
+          8262
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          43284,
+          43284,
+          43284,
+          43284
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          6,
+          47224,
+          47224,
+          31390
+        ],
+        [
+          47224,
+          28,
+          3297,
+          28
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          47224,
+          28,
+          3297,
+          28
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          26649,
+          272,
+          24014,
+          67
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          26649,
+          456,
+          6322,
+          9578
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          26649,
+          456,
+          6322,
+          9578
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          2660,
+          739,
+          2660,
+          739
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          26649,
+          456,
+          10426,
+          456
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          6,
+          47224,
+          47224,
+          31390
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ]
+      ],
+      "output_sha256": "7aec2183cf154ab976bdf98508a4559f35375eb11dd87508daf598a6b301c8b6",
+      "evictions": 0,
+      "repeat": 0,
+      "model": "HuggingFaceTB/SmolLM2-135M"
+    },
+    {
+      "kind": "real_model_profile",
+      "profiling": {
+        "method": "synchronized host wall time",
+        "timing_is_instrumented": true,
+        "note": "Stage synchronization changes runtime. prediction is nested inside eviction_decision; do not sum both. Absent stages are not called, not zero-cost observations.",
+        "summary": {
+          "cache_lookup": {
+            "calls": 60,
+            "total_ms": 0.857473999872127,
+            "mean_ms": 0.014291233331202116,
+            "p95_ms": 0.01990314999034126
+          },
+          "decode": {
+            "calls": 60,
+            "total_ms": 5780.948959999761,
+            "mean_ms": 96.34914933332935,
+            "p95_ms": 106.90200574996425
+          },
+          "eviction_decision": {
+            "calls": 32,
+            "total_ms": 2.9055039998979737,
+            "mean_ms": 0.09079699999681168,
+            "p95_ms": 0.23327615000710009
+          },
+          "first_token_selection": {
+            "calls": 60,
+            "total_ms": 5.357318000164923,
+            "mean_ms": 0.08928863333608206,
+            "p95_ms": 0.1148796500018534
+          },
+          "full_prefill": {
+            "calls": 32,
+            "total_ms": 1224.1349320000268,
+            "mean_ms": 38.254216625000836,
+            "p95_ms": 45.93421160000161
+          },
+          "hit_cache_copy": {
+            "calls": 28,
+            "total_ms": 135.89004100015245,
+            "mean_ms": 4.853215750005445,
+            "p95_ms": 5.173144949981179
+          },
+          "hit_suffix_prefill": {
+            "calls": 28,
+            "total_ms": 956.539995000071,
+            "mean_ms": 34.162142678573964,
+            "p95_ms": 36.142517049984235
+          },
+          "retain_prefix_copy": {
+            "calls": 32,
+            "total_ms": 191.27267300007134,
+            "mean_ms": 5.977271031252229,
+            "p95_ms": 7.599505449979914
+          }
+        },
+        "requests": [
+          {
+            "request_index": 0,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01453300001230673,
+              "eviction_decision": 0.011551999989478645,
+              "full_prefill": 38.14432400002943,
+              "retain_prefix_copy": 6.22034299999541,
+              "first_token_selection": 0.08907699998417229,
+              "decode": 102.6951909999525
+            }
+          },
+          {
+            "request_index": 1,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012968000021373882,
+              "eviction_decision": 0.011395000001357403,
+              "full_prefill": 39.00829799999883,
+              "retain_prefix_copy": 6.283439000014823,
+              "first_token_selection": 0.08021599995799988,
+              "decode": 99.37410800000634
+            }
+          },
+          {
+            "request_index": 2,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012773999969795113,
+              "eviction_decision": 0.011153999992075114,
+              "full_prefill": 40.57194099999606,
+              "retain_prefix_copy": 6.741484999963632,
+              "first_token_selection": 0.08525300000883362,
+              "decode": 124.50534600003493
+            }
+          },
+          {
+            "request_index": 3,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013863000049241236,
+              "eviction_decision": 0.0119910000080381,
+              "full_prefill": 42.49241700000539,
+              "retain_prefix_copy": 5.709259000013844,
+              "first_token_selection": 0.08232800001906071,
+              "decode": 94.40162999999302
+            }
+          },
+          {
+            "request_index": 4,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013684000009561714,
+              "hit_cache_copy": 4.616852000026483,
+              "hit_suffix_prefill": 33.00447399999484,
+              "first_token_selection": 0.08049100000562248,
+              "decode": 92.91424100001677
+            }
+          },
+          {
+            "request_index": 5,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.012692999973751284,
+              "hit_cache_copy": 4.385533000004216,
+              "hit_suffix_prefill": 32.4393930000042,
+              "first_token_selection": 0.08135600000969134,
+              "decode": 94.69010599997318
+            }
+          },
+          {
+            "request_index": 6,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.011936000021250948,
+              "eviction_decision": 0.011126000003969239,
+              "full_prefill": 39.86168000000134,
+              "retain_prefix_copy": 6.332471000007445,
+              "first_token_selection": 0.0792669999896134,
+              "decode": 96.07283399998323
+            }
+          },
+          {
+            "request_index": 7,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014711999995142833,
+              "hit_cache_copy": 4.722687999958453,
+              "hit_suffix_prefill": 33.10274699998672,
+              "first_token_selection": 0.07835400003841642,
+              "decode": 95.67757700000357
+            }
+          },
+          {
+            "request_index": 8,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01398599999902217,
+              "eviction_decision": 0.2022139999553474,
+              "full_prefill": 39.90334699994946,
+              "retain_prefix_copy": 5.9259289999999964,
+              "first_token_selection": 0.08016600003202257,
+              "decode": 91.73346700004004
+            }
+          },
+          {
+            "request_index": 9,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.011425999957737076,
+              "eviction_decision": 0.00988399995094369,
+              "full_prefill": 35.361121999983425,
+              "retain_prefix_copy": 7.117887999982031,
+              "first_token_selection": 0.0816979999740397,
+              "decode": 99.68639099997745
+            }
+          },
+          {
+            "request_index": 10,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.019834999989143398,
+              "eviction_decision": 0.15392000000247208,
+              "full_prefill": 48.9978919999885,
+              "retain_prefix_copy": 5.675363000023026,
+              "first_token_selection": 0.08321500001784443,
+              "decode": 95.15535000002728
+            }
+          },
+          {
+            "request_index": 11,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013921000004302186,
+              "hit_cache_copy": 5.101525000043239,
+              "hit_suffix_prefill": 33.40922400002455,
+              "first_token_selection": 0.08162199998196229,
+              "decode": 95.09909399997696
+            }
+          },
+          {
+            "request_index": 12,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012380000043776818,
+              "eviction_decision": 0.10986999996021041,
+              "full_prefill": 41.91595899999356,
+              "retain_prefix_copy": 5.368517000022166,
+              "first_token_selection": 0.08046199997124859,
+              "decode": 94.63002600000436
+            }
+          },
+          {
+            "request_index": 13,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012859999969805358,
+              "eviction_decision": 0.010288999988006253,
+              "full_prefill": 35.25796000002401,
+              "retain_prefix_copy": 5.3737509999791655,
+              "first_token_selection": 0.07657399999061454,
+              "decode": 92.49253299998372
+            }
+          },
+          {
+            "request_index": 14,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.012373000004117785,
+              "hit_cache_copy": 4.866257000003316,
+              "hit_suffix_prefill": 33.37986900004353,
+              "first_token_selection": 0.1226950000159377,
+              "decode": 95.21757799996067
+            }
+          },
+          {
+            "request_index": 15,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013172000024042063,
+              "eviction_decision": 0.24809699999650547,
+              "full_prefill": 41.197474999989936,
+              "retain_prefix_copy": 5.556544999990365,
+              "first_token_selection": 0.07894200001601348,
+              "decode": 94.57944700000098
+            }
+          },
+          {
+            "request_index": 16,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013797000008253235,
+              "hit_cache_copy": 4.732675000013842,
+              "hit_suffix_prefill": 32.43817399999216,
+              "first_token_selection": 0.0763460000143823,
+              "decode": 101.85668399998349
+            }
+          },
+          {
+            "request_index": 17,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01331299995399604,
+              "hit_cache_copy": 4.907724000020153,
+              "hit_suffix_prefill": 32.96725500001685,
+              "first_token_selection": 0.09091999999100153,
+              "decode": 106.84611799996446
+            }
+          },
+          {
+            "request_index": 18,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.0130169999579266,
+              "hit_cache_copy": 5.110898999987512,
+              "hit_suffix_prefill": 33.237391000000116,
+              "first_token_selection": 0.08123100002421779,
+              "decode": 93.54490800001258
+            }
+          },
+          {
+            "request_index": 19,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013259000013476907,
+              "eviction_decision": 0.13502799998832415,
+              "full_prefill": 35.60001399995372,
+              "retain_prefix_copy": 5.453467000052115,
+              "first_token_selection": 0.07714700001315578,
+              "decode": 99.00221899999906
+            }
+          },
+          {
+            "request_index": 20,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013129000024036941,
+              "hit_cache_copy": 4.761634000033155,
+              "hit_suffix_prefill": 33.20301000002246,
+              "first_token_selection": 0.08280800000193267,
+              "decode": 95.15678100001423
+            }
+          },
+          {
+            "request_index": 21,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012841000000207714,
+              "eviction_decision": 0.108103000002302,
+              "full_prefill": 34.44152400004441,
+              "retain_prefix_copy": 6.229206000000431,
+              "first_token_selection": 0.08160400000178925,
+              "decode": 94.16163899999219
+            }
+          },
+          {
+            "request_index": 22,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.012986999990971526,
+              "hit_cache_copy": 4.93266399996628,
+              "hit_suffix_prefill": 36.26549199998408,
+              "first_token_selection": 0.08426800002325763,
+              "decode": 91.64952600002607
+            }
+          },
+          {
+            "request_index": 23,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012518999994881597,
+              "eviction_decision": 0.15611899999612433,
+              "full_prefill": 35.996898000007604,
+              "retain_prefix_copy": 5.336776999968151,
+              "first_token_selection": 0.08241699998734475,
+              "decode": 98.2960119999916
+            }
+          },
+          {
+            "request_index": 24,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.018984999996973784,
+              "hit_cache_copy": 8.014918000014859,
+              "hit_suffix_prefill": 55.89307100001406,
+              "first_token_selection": 0.1034220000519781,
+              "decode": 123.93436299998939
+            }
+          },
+          {
+            "request_index": 25,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013830000000325526,
+              "eviction_decision": 0.15707200003589605,
+              "full_prefill": 37.60988200002657,
+              "retain_prefix_copy": 5.818071000021519,
+              "first_token_selection": 0.0934000000256674,
+              "decode": 94.88390999996454
+            }
+          },
+          {
+            "request_index": 26,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013277999983074551,
+              "eviction_decision": 0.009968000028948154,
+              "full_prefill": 37.03610600001639,
+              "retain_prefix_copy": 5.417631000000256,
+              "first_token_selection": 0.08042399997520988,
+              "decode": 90.01321100004134
+            }
+          },
+          {
+            "request_index": 27,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013854000030733005,
+              "hit_cache_copy": 4.531791999966117,
+              "hit_suffix_prefill": 31.260884000005262,
+              "first_token_selection": 0.08291000000326676,
+              "decode": 90.3005790000293
+            }
+          },
+          {
+            "request_index": 28,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012691999984326685,
+              "eviction_decision": 0.010641000017130864,
+              "full_prefill": 43.42756400001235,
+              "retain_prefix_copy": 9.45104300001276,
+              "first_token_selection": 0.11648800000330084,
+              "decode": 90.61578000000736
+            }
+          },
+          {
+            "request_index": 29,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01446499999246953,
+              "hit_cache_copy": 5.206661999977769,
+              "hit_suffix_prefill": 35.66853299997774,
+              "first_token_selection": 0.10579600001392464,
+              "decode": 89.97323699998105
+            }
+          },
+          {
+            "request_index": 30,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014478999958100758,
+              "eviction_decision": 0.011572999994768907,
+              "full_prefill": 34.459187999971164,
+              "retain_prefix_copy": 5.377934999955869,
+              "first_token_selection": 0.08676900000637033,
+              "decode": 90.78374099999564
+            }
+          },
+          {
+            "request_index": 31,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013378000005559443,
+              "eviction_decision": 0.11488100000178747,
+              "full_prefill": 41.6631599999846,
+              "retain_prefix_copy": 5.432605999999396,
+              "first_token_selection": 0.08129500002951318,
+              "decode": 90.33043699997734
+            }
+          },
+          {
+            "request_index": 32,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013738000006924267,
+              "eviction_decision": 0.18151699998725235,
+              "full_prefill": 35.01656800000319,
+              "retain_prefix_copy": 8.18814899997733,
+              "first_token_selection": 0.11235300001999349,
+              "decode": 101.8251269999837
+            }
+          },
+          {
+            "request_index": 33,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013113999955294275,
+              "eviction_decision": 0.010185000007822964,
+              "full_prefill": 35.13345599998274,
+              "retain_prefix_copy": 5.672617000016089,
+              "first_token_selection": 0.08905100003175903,
+              "decode": 94.41478100001177
+            }
+          },
+          {
+            "request_index": 34,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013479000017468934,
+              "hit_cache_copy": 4.976790999990044,
+              "hit_suffix_prefill": 34.414238000010755,
+              "first_token_selection": 0.11479500000177723,
+              "decode": 102.76695499999278
+            }
+          },
+          {
+            "request_index": 35,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.021198000013100682,
+              "eviction_decision": 0.18362399998750334,
+              "full_prefill": 36.43365199997106,
+              "retain_prefix_copy": 5.587230999992698,
+              "first_token_selection": 0.08184900002561335,
+              "decode": 91.33749699998361
+            }
+          },
+          {
+            "request_index": 36,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014447000012296485,
+              "hit_cache_copy": 4.689179000024524,
+              "hit_suffix_prefill": 32.219620000034865,
+              "first_token_selection": 0.14487300001064796,
+              "decode": 95.93226900000218
+            }
+          },
+          {
+            "request_index": 37,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013013000000228203,
+              "hit_cache_copy": 4.574262999994971,
+              "hit_suffix_prefill": 33.149479000030624,
+              "first_token_selection": 0.08968399998821042,
+              "decode": 93.71078199995964
+            }
+          },
+          {
+            "request_index": 38,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014165999971282872,
+              "hit_cache_copy": 4.711201000020537,
+              "hit_suffix_prefill": 34.747112999980345,
+              "first_token_selection": 0.09554299998626448,
+              "decode": 97.99251799995545
+            }
+          },
+          {
+            "request_index": 39,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01487399998723049,
+              "eviction_decision": 0.1082790000168643,
+              "full_prefill": 35.5108409999616,
+              "retain_prefix_copy": 5.775013000004492,
+              "first_token_selection": 0.08206399996879554,
+              "decode": 106.5231030000291
+            }
+          },
+          {
+            "request_index": 40,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01305199998569151,
+              "eviction_decision": 0.010381999970832112,
+              "full_prefill": 36.53913300001932,
+              "retain_prefix_copy": 6.241330999955608,
+              "first_token_selection": 0.08544499996787636,
+              "decode": 91.99985700001889
+            }
+          },
+          {
+            "request_index": 41,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014102000022830907,
+              "hit_cache_copy": 4.567715000007411,
+              "hit_suffix_prefill": 32.96350800002301,
+              "first_token_selection": 0.09777299999313982,
+              "decode": 94.21736299998429
+            }
+          },
+          {
+            "request_index": 42,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.025513999958093336,
+              "hit_cache_copy": 4.9379630000316865,
+              "hit_suffix_prefill": 33.60686199999918,
+              "first_token_selection": 0.08779800003821947,
+              "decode": 90.16999100003886
+            }
+          },
+          {
+            "request_index": 43,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012482999977692089,
+              "eviction_decision": 0.22115000001576846,
+              "full_prefill": 37.47837800000298,
+              "retain_prefix_copy": 5.7650119999834715,
+              "first_token_selection": 0.08301299999402545,
+              "decode": 94.19708399997262
+            }
+          },
+          {
+            "request_index": 44,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014599999985875911,
+              "eviction_decision": 0.11062999999467138,
+              "full_prefill": 36.29085000000032,
+              "retain_prefix_copy": 5.275706000020364,
+              "first_token_selection": 0.09174600000960709,
+              "decode": 91.8693780000126
+            }
+          },
+          {
+            "request_index": 45,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013720000026751222,
+              "hit_cache_copy": 4.4660020000151235,
+              "hit_suffix_prefill": 32.93606800002635,
+              "first_token_selection": 0.08832899999333677,
+              "decode": 99.12297900001477
+            }
+          },
+          {
+            "request_index": 46,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014026000030753494,
+              "hit_cache_copy": 4.4418800000016745,
+              "hit_suffix_prefill": 33.058204999974805,
+              "first_token_selection": 0.10085299999218478,
+              "decode": 92.18080899995584
+            }
+          },
+          {
+            "request_index": 47,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01401999998051906,
+              "eviction_decision": 0.28005100000427774,
+              "full_prefill": 49.293533000025036,
+              "retain_prefix_copy": 5.66781500003799,
+              "first_token_selection": 0.08538699995597199,
+              "decode": 107.96387299996013
+            }
+          },
+          {
+            "request_index": 48,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.0145200000361001,
+              "hit_cache_copy": 4.729287000031945,
+              "hit_suffix_prefill": 32.6809569999682,
+              "first_token_selection": 0.08153300001367825,
+              "decode": 94.21540499999992
+            }
+          },
+          {
+            "request_index": 49,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01412299997127775,
+              "hit_cache_copy": 4.489060000025802,
+              "hit_suffix_prefill": 33.76129099996206,
+              "first_token_selection": 0.08863400000791444,
+              "decode": 97.18778199999178
+            }
+          },
+          {
+            "request_index": 50,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013070000022707973,
+              "eviction_decision": 0.010465000002568559,
+              "full_prefill": 37.17651400000932,
+              "retain_prefix_copy": 5.406566000033308,
+              "first_token_selection": 0.08883700002115802,
+              "decode": 92.09475099999054
+            }
+          },
+          {
+            "request_index": 51,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.03101300001162599,
+              "eviction_decision": 0.09597600001143292,
+              "full_prefill": 37.57635400000936,
+              "retain_prefix_copy": 6.155581000029997,
+              "first_token_selection": 0.08114199999909033,
+              "decode": 92.10916199998564
+            }
+          },
+          {
+            "request_index": 52,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012853000043833163,
+              "eviction_decision": 0.010147000011784257,
+              "full_prefill": 35.08726400002615,
+              "retain_prefix_copy": 5.604350999988128,
+              "first_token_selection": 0.08278599995037439,
+              "decode": 98.05976899997404
+            }
+          },
+          {
+            "request_index": 53,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014290000024175242,
+              "hit_cache_copy": 5.029766999996355,
+              "hit_suffix_prefill": 35.914134999984526,
+              "first_token_selection": 0.1062730000285228,
+              "decode": 96.41194300002098
+            }
+          },
+          {
+            "request_index": 54,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01394099996332443,
+              "hit_cache_copy": 4.654215000016393,
+              "hit_suffix_prefill": 33.62649299998566,
+              "first_token_selection": 0.08223000003226844,
+              "decode": 104.35486099999025
+            }
+          },
+          {
+            "request_index": 55,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014494999959424604,
+              "hit_cache_copy": 5.005491999952483,
+              "hit_suffix_prefill": 33.20044299999836,
+              "first_token_selection": 0.10182600004782216,
+              "decode": 94.12434600000097
+            }
+          },
+          {
+            "request_index": 56,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012016000027870177,
+              "eviction_decision": 0.009867999949619843,
+              "full_prefill": 35.81551100000979,
+              "retain_prefix_copy": 5.418946000020242,
+              "first_token_selection": 0.10264799999504248,
+              "decode": 91.75546199998053
+            }
+          },
+          {
+            "request_index": 57,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.012946999959240202,
+              "hit_cache_copy": 4.324660999998287,
+              "hit_suffix_prefill": 32.40473500000007,
+              "first_token_selection": 0.09997199998679207,
+              "decode": 91.11432000003106
+            }
+          },
+          {
+            "request_index": 58,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01373499998180705,
+              "eviction_decision": 0.17835300002388976,
+              "full_prefill": 33.83612700002914,
+              "retain_prefix_copy": 5.6926290000092195,
+              "first_token_selection": 0.07830799995645066,
+              "decode": 93.03480500000205
+            }
+          },
+          {
+            "request_index": 59,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01398599999902217,
+              "hit_cache_copy": 4.4007420000298225,
+              "hit_suffix_prefill": 31.587331000025642,
+              "first_token_selection": 0.08361199996897994,
+              "decode": 89.98792400001321
+            }
+          }
+        ]
+      },
+      "device": "cuda",
+      "policy": "lfu",
+      "requests": 60,
+      "model_type": "llama",
+      "random_weights": false,
+      "torch_version": "2.11.0+cu130",
+      "transformers_version": "4.57.6",
+      "hardware": "Tesla T4",
+      "dtype": "torch.float32",
+      "batch_size": 1,
+      "concurrency": 1,
+      "fixed_output_tokens": 4,
+      "hits": 28,
+      "hit_rate": 0.4666666666666667,
+      "reused_prefix_tokens": 2720,
+      "prefix_token_reuse_rate": 0.4594594594594595,
+      "ttft_p50_ms": 41.04866200000856,
+      "ttft_p95_ms": 53.257002550014924,
+      "request_p95_ms": 150.92160854997869,
+      "measured_requests_per_second": 7.223617935233825,
+      "measured_output_tokens_per_second": 28.8944717409353,
+      "retained_peak_bytes": 32440320,
+      "cache_budget_bytes": 33554432,
+      "cuda_peak_allocated_bytes": 653106688,
+      "eviction_decision_p95_ms": 0.21522189999814145,
+      "cache_hit_by_request": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+        false,
+        false,
+        true,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        false,
+        true,
+        false,
+        true
+      ],
+      "generated_token_ids": [
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          8262,
+          274,
+          86,
+          2178
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          8262,
+          8262,
+          8262,
+          8262
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          43284,
+          43284,
+          43284,
+          43284
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          6,
+          47224,
+          47224,
+          31390
+        ],
+        [
+          47224,
+          28,
+          3297,
+          28
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          47224,
+          28,
+          3297,
+          28
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          26649,
+          272,
+          24014,
+          67
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          26649,
+          456,
+          6322,
+          9578
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          26649,
+          456,
+          6322,
+          9578
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          2660,
+          739,
+          2660,
+          739
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          26649,
+          456,
+          10426,
+          456
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          6,
+          47224,
+          47224,
+          31390
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ]
+      ],
+      "output_sha256": "7aec2183cf154ab976bdf98508a4559f35375eb11dd87508daf598a6b301c8b6",
+      "evictions": 23,
+      "repeat": 0,
+      "model": "HuggingFaceTB/SmolLM2-135M"
+    },
+    {
+      "kind": "real_model_profile",
+      "profiling": {
+        "method": "synchronized host wall time",
+        "timing_is_instrumented": true,
+        "note": "Stage synchronization changes runtime. prediction is nested inside eviction_decision; do not sum both. Absent stages are not called, not zero-cost observations.",
+        "summary": {
+          "cache_lookup": {
+            "calls": 60,
+            "total_ms": 0.8740940000393493,
+            "mean_ms": 0.014568233333989156,
+            "p95_ms": 0.01893845000324745
+          },
+          "decode": {
+            "calls": 60,
+            "total_ms": 5834.966940000242,
+            "mean_ms": 97.24944900000403,
+            "p95_ms": 109.44685855001806
+          },
+          "eviction_decision": {
+            "calls": 32,
+            "total_ms": 5.602760000101625,
+            "mean_ms": 0.1750862500031758,
+            "p95_ms": 0.549578900026404
+          },
+          "first_token_selection": {
+            "calls": 60,
+            "total_ms": 5.347236000034172,
+            "mean_ms": 0.08912060000056954,
+            "p95_ms": 0.10944680000477547
+          },
+          "full_prefill": {
+            "calls": 32,
+            "total_ms": 1295.1209430001995,
+            "mean_ms": 40.472529468756235,
+            "p95_ms": 50.825030849986774
+          },
+          "hit_cache_copy": {
+            "calls": 28,
+            "total_ms": 144.09436700009337,
+            "mean_ms": 5.146227392860477,
+            "p95_ms": 7.098299150015917
+          },
+          "hit_suffix_prefill": {
+            "calls": 28,
+            "total_ms": 975.8566390000283,
+            "mean_ms": 34.85202282142958,
+            "p95_ms": 43.101342149986976
+          },
+          "prediction": {
+            "calls": 13,
+            "total_ms": 2.29994799991573,
+            "mean_ms": 0.17691907691659464,
+            "p95_ms": 0.2545835999853807
+          },
+          "retain_prefix_copy": {
+            "calls": 32,
+            "total_ms": 193.97937400003684,
+            "mean_ms": 6.061855437501151,
+            "p95_ms": 7.9212034000363465
+          }
+        },
+        "requests": [
+          {
+            "request_index": 0,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01350700000557481,
+              "eviction_decision": 0.011060000019824656,
+              "full_prefill": 48.36610099999916,
+              "retain_prefix_copy": 7.169126999997388,
+              "first_token_selection": 0.14642499996853076,
+              "decode": 93.736075000038
+            }
+          },
+          {
+            "request_index": 1,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01202499998953499,
+              "eviction_decision": 0.010413000040898623,
+              "full_prefill": 36.600285000019994,
+              "retain_prefix_copy": 5.33695799998668,
+              "first_token_selection": 0.0887240000224665,
+              "decode": 92.43906799997603
+            }
+          },
+          {
+            "request_index": 2,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012828000024001085,
+              "eviction_decision": 0.01163799998948889,
+              "full_prefill": 36.0831290000192,
+              "retain_prefix_copy": 8.761543999980859,
+              "first_token_selection": 0.10677200003783582,
+              "decode": 141.0392399999978
+            }
+          },
+          {
+            "request_index": 3,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013040999988334079,
+              "eviction_decision": 0.010779000035654462,
+              "full_prefill": 56.1991140000373,
+              "retain_prefix_copy": 5.393421999997372,
+              "first_token_selection": 0.09235700002818703,
+              "decode": 97.31236999999737
+            }
+          },
+          {
+            "request_index": 4,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.018850000003567402,
+              "hit_cache_copy": 5.9186929999555105,
+              "hit_suffix_prefill": 33.518813999990016,
+              "first_token_selection": 0.08337300005223369,
+              "decode": 98.58781700000918
+            }
+          },
+          {
+            "request_index": 5,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013410999997631734,
+              "hit_cache_copy": 4.5546840000270095,
+              "hit_suffix_prefill": 33.908386999996765,
+              "first_token_selection": 0.09573699998099983,
+              "decode": 91.96742599999652
+            }
+          },
+          {
+            "request_index": 6,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013283000043884385,
+              "eviction_decision": 0.010836000001290813,
+              "full_prefill": 47.82244899996613,
+              "retain_prefix_copy": 6.1284949999844684,
+              "first_token_selection": 0.08341000000200438,
+              "decode": 93.19693100002269
+            }
+          },
+          {
+            "request_index": 7,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013776000002962974,
+              "hit_cache_copy": 6.333761999997023,
+              "hit_suffix_prefill": 46.443124999996144,
+              "first_token_selection": 0.08557000001019333,
+              "decode": 92.32458200000337
+            }
+          },
+          {
+            "request_index": 8,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013502999991032993,
+              "prediction": 0.24741599997923913,
+              "eviction_decision": 0.40415800003756885,
+              "full_prefill": 44.472229000007246,
+              "retain_prefix_copy": 5.520766000017829,
+              "first_token_selection": 0.08224500004416768,
+              "decode": 92.20846300001995
+            }
+          },
+          {
+            "request_index": 9,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012317999960487214,
+              "prediction": 0.15510899999071626,
+              "eviction_decision": 0.2947039999980916,
+              "full_prefill": 38.51591200003668,
+              "retain_prefix_copy": 5.45168499996862,
+              "first_token_selection": 0.07971899998437948,
+              "decode": 91.23681900001657
+            }
+          },
+          {
+            "request_index": 10,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012718000050426781,
+              "eviction_decision": 0.010357000007843453,
+              "full_prefill": 37.04650800000309,
+              "retain_prefix_copy": 5.748069999981453,
+              "first_token_selection": 0.07815500003971465,
+              "decode": 88.68697600001951
+            }
+          },
+          {
+            "request_index": 11,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014131000000361382,
+              "hit_cache_copy": 4.475890999970034,
+              "hit_suffix_prefill": 33.21858100002828,
+              "first_token_selection": 0.0871459999984836,
+              "decode": 95.55337199998348
+            }
+          },
+          {
+            "request_index": 12,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012676999972427438,
+              "prediction": 0.18225200000188124,
+              "eviction_decision": 0.41435700001102305,
+              "full_prefill": 47.39969400003474,
+              "retain_prefix_copy": 5.368464000014228,
+              "first_token_selection": 0.08128600001100494,
+              "decode": 91.16608200002929
+            }
+          },
+          {
+            "request_index": 13,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012512000012065982,
+              "eviction_decision": 0.010368999994625483,
+              "full_prefill": 33.89526000000842,
+              "retain_prefix_copy": 5.364529000019047,
+              "first_token_selection": 0.08855900000526162,
+              "decode": 90.1357249999819
+            }
+          },
+          {
+            "request_index": 14,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01677800003108132,
+              "hit_cache_copy": 4.568785999992997,
+              "hit_suffix_prefill": 33.77198700002282,
+              "first_token_selection": 0.10122399999090703,
+              "decode": 106.12041399997452
+            }
+          },
+          {
+            "request_index": 15,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012205000018639112,
+              "prediction": 0.16810200003192222,
+              "eviction_decision": 0.3946769999743083,
+              "full_prefill": 42.73358899996538,
+              "retain_prefix_copy": 6.061083000020062,
+              "first_token_selection": 0.08200799999258379,
+              "decode": 93.73960599998554
+            }
+          },
+          {
+            "request_index": 16,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013384999988375057,
+              "hit_cache_copy": 4.4647409999925,
+              "hit_suffix_prefill": 31.795671999987007,
+              "first_token_selection": 0.08856499999865264,
+              "decode": 93.2146620000367
+            }
+          },
+          {
+            "request_index": 17,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014057000043976586,
+              "hit_cache_copy": 4.601510000043163,
+              "hit_suffix_prefill": 31.954842000004646,
+              "first_token_selection": 0.10939800000642208,
+              "decode": 93.30476799999587
+            }
+          },
+          {
+            "request_index": 18,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.027999999986150215,
+              "hit_cache_copy": 4.563876000020173,
+              "hit_suffix_prefill": 32.7213080000206,
+              "first_token_selection": 0.08123499998191619,
+              "decode": 89.94258800004218
+            }
+          },
+          {
+            "request_index": 19,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01297099998964768,
+              "prediction": 0.14799600000969804,
+              "eviction_decision": 0.32172899994975523,
+              "full_prefill": 38.23649299999943,
+              "retain_prefix_copy": 8.971554000027027,
+              "first_token_selection": 0.10754499999166,
+              "decode": 103.74507299997049
+            }
+          },
+          {
+            "request_index": 20,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013242000022728462,
+              "hit_cache_copy": 4.809973000021728,
+              "hit_suffix_prefill": 34.862508000003345,
+              "first_token_selection": 0.08365299999013587,
+              "decode": 99.10795000001826
+            }
+          },
+          {
+            "request_index": 21,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014117999967311334,
+              "eviction_decision": 0.011736999965705763,
+              "full_prefill": 37.563272999989294,
+              "retain_prefix_copy": 5.859962999977597,
+              "first_token_selection": 0.07869999996046317,
+              "decode": 92.64539200000854
+            }
+          },
+          {
+            "request_index": 22,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013410999997631734,
+              "hit_cache_copy": 7.509973000026093,
+              "hit_suffix_prefill": 43.42313600000125,
+              "first_token_selection": 0.08230700001377045,
+              "decode": 89.34721800000034
+            }
+          },
+          {
+            "request_index": 23,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.012436000019988569,
+              "hit_cache_copy": 4.4931040000051325,
+              "hit_suffix_prefill": 32.079860000010285,
+              "first_token_selection": 0.08548899995730608,
+              "decode": 89.5105489999537
+            }
+          },
+          {
+            "request_index": 24,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014086999954088242,
+              "hit_cache_copy": 4.788108000013835,
+              "hit_suffix_prefill": 31.250370000009298,
+              "first_token_selection": 0.07639099999323662,
+              "decode": 89.87225400005627
+            }
+          },
+          {
+            "request_index": 25,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.018336000039198552,
+              "eviction_decision": 0.015157999996517901,
+              "full_prefill": 35.358789000042634,
+              "retain_prefix_copy": 5.2489050000303905,
+              "first_token_selection": 0.08391300002585922,
+              "decode": 91.56872999994903
+            }
+          },
+          {
+            "request_index": 26,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014376999956766667,
+              "hit_cache_copy": 4.630924999958097,
+              "hit_suffix_prefill": 32.577035000031174,
+              "first_token_selection": 0.08573699994940398,
+              "decode": 98.90854599996146
+            }
+          },
+          {
+            "request_index": 27,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013023000008161034,
+              "hit_cache_copy": 5.04746899997599,
+              "hit_suffix_prefill": 33.14335199996776,
+              "first_token_selection": 0.08977300001333788,
+              "decode": 91.653851999979
+            }
+          },
+          {
+            "request_index": 28,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013816000034694298,
+              "eviction_decision": 0.010351000014452438,
+              "full_prefill": 34.64059499998484,
+              "retain_prefix_copy": 5.984001999991051,
+              "first_token_selection": 0.11037399997348984,
+              "decode": 90.89612799999713
+            }
+          },
+          {
+            "request_index": 29,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013878999993721663,
+              "prediction": 0.16013000004022615,
+              "eviction_decision": 0.5839880000166886,
+              "full_prefill": 50.53044599998202,
+              "retain_prefix_copy": 5.379738999977235,
+              "first_token_selection": 0.08511400000088543,
+              "decode": 108.74940799999422
+            }
+          },
+          {
+            "request_index": 30,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013089000049149035,
+              "prediction": 0.14954400000988244,
+              "eviction_decision": 0.32580700002426966,
+              "full_prefill": 36.75456100000929,
+              "retain_prefix_copy": 5.6545109999888155,
+              "first_token_selection": 0.0876359999892884,
+              "decode": 92.69619499997361
+            }
+          },
+          {
+            "request_index": 31,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013089999981730216,
+              "prediction": 0.1705659999515774,
+              "eviction_decision": 0.43953300001930984,
+              "full_prefill": 41.056572000002234,
+              "retain_prefix_copy": 5.68055399998002,
+              "first_token_selection": 0.08321100000330262,
+              "decode": 91.85877900000605
+            }
+          },
+          {
+            "request_index": 32,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012860000026648777,
+              "eviction_decision": 0.010895000002619781,
+              "full_prefill": 37.45194100002891,
+              "retain_prefix_copy": 6.898483999975724,
+              "first_token_selection": 0.08722499995883481,
+              "decode": 90.2409810000222
+            }
+          },
+          {
+            "request_index": 33,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01325599998835969,
+              "eviction_decision": 0.010173999953622115,
+              "full_prefill": 34.6217910000064,
+              "retain_prefix_copy": 5.267373000037878,
+              "first_token_selection": 0.08017199996857016,
+              "decode": 97.5049170000375
+            }
+          },
+          {
+            "request_index": 34,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013466999973843485,
+              "eviction_decision": 0.010500999962914648,
+              "full_prefill": 35.53189100000509,
+              "retain_prefix_copy": 5.715399999985493,
+              "first_token_selection": 0.08159499998328101,
+              "decode": 89.38248099997281
+            }
+          },
+          {
+            "request_index": 35,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013219999971170182,
+              "hit_cache_copy": 5.167962000030002,
+              "hit_suffix_prefill": 32.14021700000558,
+              "first_token_selection": 0.0914379999699122,
+              "decode": 89.6667570000318
+            }
+          },
+          {
+            "request_index": 36,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013922000050570205,
+              "hit_cache_copy": 4.5985240000163685,
+              "hit_suffix_prefill": 32.17352799998707,
+              "first_token_selection": 0.08386100000734587,
+              "decode": 91.09647299999324
+            }
+          },
+          {
+            "request_index": 37,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01374699996858908,
+              "hit_cache_copy": 4.894164999996065,
+              "hit_suffix_prefill": 32.353065999984665,
+              "first_token_selection": 0.08791100003691099,
+              "decode": 104.74349599996913
+            }
+          },
+          {
+            "request_index": 38,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.02061899999716843,
+              "prediction": 0.15974399997276123,
+              "eviction_decision": 0.3110509999828537,
+              "full_prefill": 36.438595999982226,
+              "retain_prefix_copy": 5.755192999970404,
+              "first_token_selection": 0.09483100001261846,
+              "decode": 96.89440400001104
+            }
+          },
+          {
+            "request_index": 39,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014504000034776254,
+              "prediction": 0.13959399996110733,
+              "eviction_decision": 0.2807859999620632,
+              "full_prefill": 40.25156400001606,
+              "retain_prefix_copy": 5.8509650000360125,
+              "first_token_selection": 0.08432000004177098,
+              "decode": 104.85267000001386
+            }
+          },
+          {
+            "request_index": 40,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01604800002041884,
+              "eviction_decision": 0.03374900001062997,
+              "full_prefill": 40.27074100002892,
+              "retain_prefix_copy": 5.772126000010758,
+              "first_token_selection": 0.08273600002439707,
+              "decode": 108.43920300004584
+            }
+          },
+          {
+            "request_index": 41,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014743999997790525,
+              "hit_cache_copy": 7.932085999982519,
+              "hit_suffix_prefill": 41.4440280000008,
+              "first_token_selection": 0.08893000000398388,
+              "decode": 93.37366200003316
+            }
+          },
+          {
+            "request_index": 42,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.0156849999939368,
+              "hit_cache_copy": 4.817695999975058,
+              "hit_suffix_prefill": 33.06057000003193,
+              "first_token_selection": 0.08723900003815288,
+              "decode": 91.89285500002597
+            }
+          },
+          {
+            "request_index": 43,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012636000008114934,
+              "eviction_decision": 0.010595000048851944,
+              "full_prefill": 36.89002999999502,
+              "retain_prefix_copy": 6.159991999993508,
+              "first_token_selection": 0.11580299997149268,
+              "decode": 95.40268699998933
+            }
+          },
+          {
+            "request_index": 44,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013159999980416615,
+              "hit_cache_copy": 4.907489999993686,
+              "hit_suffix_prefill": 33.69929600000887,
+              "first_token_selection": 0.0922750000427186,
+              "decode": 109.29929600001742
+            }
+          },
+          {
+            "request_index": 45,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014068999973915197,
+              "hit_cache_copy": 4.7892540000020745,
+              "hit_suffix_prefill": 33.37025400003313,
+              "first_token_selection": 0.08554200002208745,
+              "decode": 93.1493699999919
+            }
+          },
+          {
+            "request_index": 46,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01404299996465852,
+              "hit_cache_copy": 4.524939000020822,
+              "hit_suffix_prefill": 32.45372799995039,
+              "first_token_selection": 0.08422099995186727,
+              "decode": 95.08915000003526
+            }
+          },
+          {
+            "request_index": 47,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013690000002952729,
+              "prediction": 0.1917289999937566,
+              "eviction_decision": 0.5214260000343529,
+              "full_prefill": 51.185078999992584,
+              "retain_prefix_copy": 5.871488999957819,
+              "first_token_selection": 0.08618800001158888,
+              "decode": 99.6563270000479
+            }
+          },
+          {
+            "request_index": 48,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014792000001762062,
+              "hit_cache_copy": 5.806982999956745,
+              "hit_suffix_prefill": 42.50372499996047,
+              "first_token_selection": 0.08668000003808629,
+              "decode": 99.20067999996718
+            }
+          },
+          {
+            "request_index": 49,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.015202000042791042,
+              "hit_cache_copy": 5.018159000030664,
+              "hit_suffix_prefill": 35.56104699998741,
+              "first_token_selection": 0.08837100000391729,
+              "decode": 99.02879500003792
+            }
+          },
+          {
+            "request_index": 50,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01514899997800967,
+              "prediction": 0.16243099997836907,
+              "eviction_decision": 0.3089100000011058,
+              "full_prefill": 39.39706600004911,
+              "retain_prefix_copy": 5.8737690000043585,
+              "first_token_selection": 0.08505900001409827,
+              "decode": 100.3492610000194
+            }
+          },
+          {
+            "request_index": 51,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.015092000012373319,
+              "eviction_decision": 0.011428999982854293,
+              "full_prefill": 36.497517999976026,
+              "retain_prefix_copy": 5.848740000033104,
+              "first_token_selection": 0.08453700002064579,
+              "decode": 112.25054700003056
+            }
+          },
+          {
+            "request_index": 52,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013742000021466083,
+              "eviction_decision": 0.011134999965634051,
+              "full_prefill": 37.04270600002246,
+              "retain_prefix_copy": 6.393792999972447,
+              "first_token_selection": 0.08456000000478525,
+              "decode": 100.72379800004683
+            }
+          },
+          {
+            "request_index": 53,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.015436999944995478,
+              "hit_cache_copy": 5.46226800003069,
+              "hit_suffix_prefill": 36.19145800001888,
+              "first_token_selection": 0.08641699997724572,
+              "decode": 102.34807299997328
+            }
+          },
+          {
+            "request_index": 54,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.016028999993977777,
+              "hit_cache_copy": 5.149491999986822,
+              "hit_suffix_prefill": 34.977821000040876,
+              "first_token_selection": 0.08442799997965267,
+              "decode": 102.51572399999986
+            }
+          },
+          {
+            "request_index": 55,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.02361400004247116,
+              "prediction": 0.2653349999945931,
+              "eviction_decision": 0.7643180000513894,
+              "full_prefill": 48.89512600004764,
+              "retain_prefix_copy": 6.077012000105242,
+              "first_token_selection": 0.08597700002610509,
+              "decode": 99.40686000004462
+            }
+          },
+          {
+            "request_index": 56,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.015836999978091626,
+              "eviction_decision": 0.01398500000959757,
+              "full_prefill": 39.79013899993333,
+              "retain_prefix_copy": 7.233652000081747,
+              "first_token_selection": 0.08286699994641822,
+              "decode": 99.03552699995544
+            }
+          },
+          {
+            "request_index": 57,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014948999933039886,
+              "hit_cache_copy": 5.044188000056238,
+              "hit_suffix_prefill": 35.15327699994941,
+              "first_token_selection": 0.09513000009064854,
+              "decode": 99.53453499997522
+            }
+          },
+          {
+            "request_index": 58,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.016882000068108027,
+              "eviction_decision": 0.012155000035818375,
+              "full_prefill": 37.58175600000868,
+              "retain_prefix_copy": 6.178014999932202,
+              "first_token_selection": 0.10270199993556162,
+              "decode": 114.02747499994348
+            }
+          },
+          {
+            "request_index": 59,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01481899994359992,
+              "hit_cache_copy": 5.219666000016332,
+              "hit_suffix_prefill": 36.10564699999941,
+              "first_token_selection": 0.08446999993338977,
+              "decode": 99.38787800001592
+            }
+          }
+        ]
+      },
+      "device": "cuda",
+      "policy": "learned",
+      "requests": 60,
+      "model_type": "llama",
+      "random_weights": false,
+      "torch_version": "2.11.0+cu130",
+      "transformers_version": "4.57.6",
+      "hardware": "Tesla T4",
+      "dtype": "torch.float32",
+      "batch_size": 1,
+      "concurrency": 1,
+      "fixed_output_tokens": 4,
+      "hits": 28,
+      "hit_rate": 0.4666666666666667,
+      "reused_prefix_tokens": 2432,
+      "prefix_token_reuse_rate": 0.41081081081081083,
+      "ttft_p50_ms": 42.35130949996346,
+      "ttft_p95_ms": 56.03842979995193,
+      "request_p95_ms": 158.11689185000262,
+      "measured_requests_per_second": 7.088852343276848,
+      "measured_output_tokens_per_second": 28.355409373107392,
+      "retained_peak_bytes": 32440320,
+      "cache_budget_bytes": 33554432,
+      "cuda_peak_allocated_bytes": 653106688,
+      "eviction_decision_p95_ms": 0.5300391999753629,
+      "cache_hit_by_request": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        false,
+        true,
+        false,
+        true
+      ],
+      "generated_token_ids": [
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          8262,
+          274,
+          86,
+          2178
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          8262,
+          8262,
+          8262,
+          8262
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          43284,
+          43284,
+          43284,
+          43284
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          6,
+          47224,
+          47224,
+          31390
+        ],
+        [
+          47224,
+          28,
+          3297,
+          28
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          47224,
+          28,
+          3297,
+          28
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          26649,
+          272,
+          24014,
+          67
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          26649,
+          456,
+          6322,
+          9578
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          26649,
+          456,
+          6322,
+          9578
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          2660,
+          739,
+          2660,
+          739
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          26649,
+          456,
+          10426,
+          456
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          6,
+          47224,
+          47224,
+          31390
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ]
+      ],
+      "output_sha256": "7aec2183cf154ab976bdf98508a4559f35375eb11dd87508daf598a6b301c8b6",
+      "evictions": 23,
+      "repeat": 0,
+      "model": "HuggingFaceTB/SmolLM2-135M"
+    },
+    {
+      "kind": "real_model_profile",
+      "profiling": {
+        "method": "synchronized host wall time",
+        "timing_is_instrumented": true,
+        "note": "Stage synchronization changes runtime. prediction is nested inside eviction_decision; do not sum both. Absent stages are not called, not zero-cost observations.",
+        "summary": {
+          "cache_lookup": {
+            "calls": 60,
+            "total_ms": 0.9017510003559437,
+            "mean_ms": 0.015029183339265728,
+            "p95_ms": 0.02218109992782047
+          },
+          "decode": {
+            "calls": 60,
+            "total_ms": 5617.888928999946,
+            "mean_ms": 93.6314821499991,
+            "p95_ms": 106.00961970004619
+          },
+          "eviction_decision": {
+            "calls": 31,
+            "total_ms": 3.1320580001192866,
+            "mean_ms": 0.10103412903610602,
+            "p95_ms": 0.2915074999805256
+          },
+          "first_token_selection": {
+            "calls": 60,
+            "total_ms": 4.952597000055903,
+            "mean_ms": 0.08254328333426504,
+            "p95_ms": 0.0963926500276102
+          },
+          "full_prefill": {
+            "calls": 31,
+            "total_ms": 1158.7805060000846,
+            "mean_ms": 37.38001632258337,
+            "p95_ms": 46.72803800002612
+          },
+          "hit_cache_copy": {
+            "calls": 29,
+            "total_ms": 147.64447100014877,
+            "mean_ms": 5.091188655177544,
+            "p95_ms": 8.193475999996734
+          },
+          "hit_suffix_prefill": {
+            "calls": 29,
+            "total_ms": 956.9522959998267,
+            "mean_ms": 32.99835503447678,
+            "p95_ms": 37.54419679992224
+          },
+          "retain_prefix_copy": {
+            "calls": 31,
+            "total_ms": 174.17438199981916,
+            "mean_ms": 5.6185284516070695,
+            "p95_ms": 6.271077500059619
+          }
+        },
+        "requests": [
+          {
+            "request_index": 0,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012711999943348928,
+              "eviction_decision": 0.010415000019747822,
+              "full_prefill": 36.66268300003139,
+              "retain_prefix_copy": 5.438759999947251,
+              "first_token_selection": 0.0811280000334591,
+              "decode": 91.50790799992592
+            }
+          },
+          {
+            "request_index": 1,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013149999972483783,
+              "eviction_decision": 0.01069000006737042,
+              "full_prefill": 34.93810199995551,
+              "retain_prefix_copy": 5.676434999941193,
+              "first_token_selection": 0.08958099999745173,
+              "decode": 89.90854199998921
+            }
+          },
+          {
+            "request_index": 2,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012746000038532657,
+              "eviction_decision": 0.010890999988077965,
+              "full_prefill": 34.04815299995789,
+              "retain_prefix_copy": 5.392546999928527,
+              "first_token_selection": 0.0787750000199594,
+              "decode": 92.72312900009183
+            }
+          },
+          {
+            "request_index": 3,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012448999996195198,
+              "eviction_decision": 0.010490000022400636,
+              "full_prefill": 44.803695000041444,
+              "retain_prefix_copy": 5.509585000027073,
+              "first_token_selection": 0.08008800000425254,
+              "decode": 100.92075399995792
+            }
+          },
+          {
+            "request_index": 4,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.02252499996302504,
+              "hit_cache_copy": 7.298859999991691,
+              "hit_suffix_prefill": 33.28090599995903,
+              "first_token_selection": 0.08414499995978986,
+              "decode": 90.89485700008026
+            }
+          },
+          {
+            "request_index": 5,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.012714999911622726,
+              "hit_cache_copy": 4.514157000016894,
+              "hit_suffix_prefill": 32.62246600002072,
+              "first_token_selection": 0.08677400001033675,
+              "decode": 91.82301500004542
+            }
+          },
+          {
+            "request_index": 6,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.011788000051637937,
+              "eviction_decision": 0.026223000077152392,
+              "full_prefill": 41.87584099997821,
+              "retain_prefix_copy": 5.943394999917473,
+              "first_token_selection": 0.07916200002000551,
+              "decode": 96.80033499989804
+            }
+          },
+          {
+            "request_index": 7,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013912999975218554,
+              "hit_cache_copy": 4.410821999954351,
+              "hit_suffix_prefill": 31.722469999976965,
+              "first_token_selection": 0.07886399998824345,
+              "decode": 87.75563300002887
+            }
+          },
+          {
+            "request_index": 8,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012553000033221906,
+              "eviction_decision": 0.4197239999257363,
+              "full_prefill": 40.14629099992817,
+              "retain_prefix_copy": 5.299038999964978,
+              "first_token_selection": 0.0758160000486896,
+              "decode": 88.93733000002157
+            }
+          },
+          {
+            "request_index": 9,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013078000051791605,
+              "eviction_decision": 0.010664000001270324,
+              "full_prefill": 34.83302999995885,
+              "retain_prefix_copy": 5.664456999966205,
+              "first_token_selection": 0.07425999990573473,
+              "decode": 89.82518999994227
+            }
+          },
+          {
+            "request_index": 10,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.011599999993450183,
+              "eviction_decision": 0.010846000009223644,
+              "full_prefill": 34.58660300009342,
+              "retain_prefix_copy": 6.078118000004906,
+              "first_token_selection": 0.07826200010185858,
+              "decode": 90.39443099993605
+            }
+          },
+          {
+            "request_index": 11,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014423000038732425,
+              "hit_cache_copy": 4.522124000004624,
+              "hit_suffix_prefill": 31.75517099998615,
+              "first_token_selection": 0.08611500004462869,
+              "decode": 103.61974500005999
+            }
+          },
+          {
+            "request_index": 12,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013983000030748372,
+              "hit_cache_copy": 4.4940250000991,
+              "hit_suffix_prefill": 43.39123900001596,
+              "first_token_selection": 0.10389999999915744,
+              "decode": 133.09628000001794
+            }
+          },
+          {
+            "request_index": 13,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01160399995114858,
+              "eviction_decision": 0.010710000083236082,
+              "full_prefill": 35.19705199994405,
+              "retain_prefix_copy": 5.600333000074897,
+              "first_token_selection": 0.08291400001780858,
+              "decode": 92.65195400007542
+            }
+          },
+          {
+            "request_index": 14,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.04838600000311999,
+              "hit_cache_copy": 7.53520099999605,
+              "hit_suffix_prefill": 34.69384999993963,
+              "first_token_selection": 0.07547099994553719,
+              "decode": 89.71986999995352
+            }
+          },
+          {
+            "request_index": 15,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012987999980396125,
+              "eviction_decision": 0.13548000003993366,
+              "full_prefill": 37.70388600003116,
+              "retain_prefix_copy": 5.432101999986116,
+              "first_token_selection": 0.07584799993765046,
+              "decode": 90.84408399996846
+            }
+          },
+          {
+            "request_index": 16,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013502999991032993,
+              "hit_cache_copy": 4.3431410000494,
+              "hit_suffix_prefill": 32.67552499994508,
+              "first_token_selection": 0.07812299998022354,
+              "decode": 92.40172300007998
+            }
+          },
+          {
+            "request_index": 17,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013081000020065403,
+              "eviction_decision": 0.12295800001993484,
+              "full_prefill": 35.485595000068315,
+              "retain_prefix_copy": 5.315416000030382,
+              "first_token_selection": 0.07380100009868329,
+              "decode": 90.45930399997815
+            }
+          },
+          {
+            "request_index": 18,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013715000022784807,
+              "hit_cache_copy": 4.329118000100607,
+              "hit_suffix_prefill": 30.974846000049183,
+              "first_token_selection": 0.08736999996017403,
+              "decode": 88.29911499992704
+            }
+          },
+          {
+            "request_index": 19,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012974000014764897,
+              "eviction_decision": 0.010774999964269227,
+              "full_prefill": 46.67612000002919,
+              "retain_prefix_copy": 6.2935800000332165,
+              "first_token_selection": 0.07265799990818778,
+              "decode": 89.39683500000228
+            }
+          },
+          {
+            "request_index": 20,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014138999972601596,
+              "eviction_decision": 0.010274000032950426,
+              "full_prefill": 35.582392000037544,
+              "retain_prefix_copy": 5.2286339999909615,
+              "first_token_selection": 0.09414100009053072,
+              "decode": 88.73548799999753
+            }
+          },
+          {
+            "request_index": 21,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013081000020065403,
+              "eviction_decision": 0.0102369999694929,
+              "full_prefill": 34.24288600001546,
+              "retain_prefix_copy": 5.5566660000749835,
+              "first_token_selection": 0.08548099992822245,
+              "decode": 95.39624199999253
+            }
+          },
+          {
+            "request_index": 22,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013359000035961799,
+              "hit_cache_copy": 4.446800999971856,
+              "hit_suffix_prefill": 31.725812999980008,
+              "first_token_selection": 0.0741610000432047,
+              "decode": 88.22592599995005
+            }
+          },
+          {
+            "request_index": 23,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014821000036135956,
+              "hit_cache_copy": 4.405633000033049,
+              "hit_suffix_prefill": 31.586253000000397,
+              "first_token_selection": 0.08487500008413917,
+              "decode": 87.52832599998328
+            }
+          },
+          {
+            "request_index": 24,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013641999998981191,
+              "hit_cache_copy": 4.6209529999714505,
+              "hit_suffix_prefill": 31.839395999895714,
+              "first_token_selection": 0.08521900008418015,
+              "decode": 90.56450600007793
+            }
+          },
+          {
+            "request_index": 25,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012705000017376733,
+              "eviction_decision": 0.010146000022359658,
+              "full_prefill": 34.721317999924395,
+              "retain_prefix_copy": 6.346462999999858,
+              "first_token_selection": 0.08009499993022473,
+              "decode": 92.24090500003967
+            }
+          },
+          {
+            "request_index": 26,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013368999930207792,
+              "hit_cache_copy": 4.560824999998658,
+              "hit_suffix_prefill": 31.762025999910293,
+              "first_token_selection": 0.0911189999897033,
+              "decode": 100.63354800001889
+            }
+          },
+          {
+            "request_index": 27,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.022162999925967597,
+              "hit_cache_copy": 8.632325999997192,
+              "hit_suffix_prefill": 33.22687800005042,
+              "first_token_selection": 0.08228899991991057,
+              "decode": 92.9785629999742
+            }
+          },
+          {
+            "request_index": 28,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014732000067851914,
+              "eviction_decision": 0.15613000005032518,
+              "full_prefill": 33.72442499994577,
+              "retain_prefix_copy": 5.436045999999806,
+              "first_token_selection": 0.07724800002506527,
+              "decode": 89.38695799997731
+            }
+          },
+          {
+            "request_index": 29,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013588000001618639,
+              "eviction_decision": 0.32362000001739943,
+              "full_prefill": 46.77995600002305,
+              "retain_prefix_copy": 5.411090000052354,
+              "first_token_selection": 0.08084899991445127,
+              "decode": 89.922300000012
+            }
+          },
+          {
+            "request_index": 30,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01353900006506592,
+              "eviction_decision": 0.011765000067498477,
+              "full_prefill": 36.291788000085035,
+              "retain_prefix_copy": 5.534790999945471,
+              "first_token_selection": 0.0867210000023988,
+              "decode": 91.10170899998593
+            }
+          },
+          {
+            "request_index": 31,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013596000030702271,
+              "eviction_decision": 0.17115200000716868,
+              "full_prefill": 35.85695100002795,
+              "retain_prefix_copy": 5.4060360000676155,
+              "first_token_selection": 0.07776400002512673,
+              "decode": 89.16856299993015
+            }
+          },
+          {
+            "request_index": 32,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.014203999967321579,
+              "hit_cache_copy": 4.535971999985122,
+              "hit_suffix_prefill": 33.1614049999871,
+              "first_token_selection": 0.08668199996009207,
+              "decode": 87.323146000017
+            }
+          },
+          {
+            "request_index": 33,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012972000035915698,
+              "eviction_decision": 0.15212899995731277,
+              "full_prefill": 34.56137299997408,
+              "retain_prefix_copy": 5.506134000029306,
+              "first_token_selection": 0.0751549999904455,
+              "decode": 96.51449700004378
+            }
+          },
+          {
+            "request_index": 34,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.015714000028310693,
+              "hit_cache_copy": 4.455810999957066,
+              "hit_suffix_prefill": 32.554710999988856,
+              "first_token_selection": 0.08067900000696682,
+              "decode": 107.29119600000558
+            }
+          },
+          {
+            "request_index": 35,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01299200005178136,
+              "hit_cache_copy": 4.389559000060217,
+              "hit_suffix_prefill": 32.115719999978865,
+              "first_token_selection": 0.07797700004630315,
+              "decode": 93.26924699996653
+            }
+          },
+          {
+            "request_index": 36,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013293000051817216,
+              "hit_cache_copy": 4.67234199993527,
+              "hit_suffix_prefill": 31.145996000077503,
+              "first_token_selection": 0.07673900006466283,
+              "decode": 96.61522900000818
+            }
+          },
+          {
+            "request_index": 37,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013925999951425183,
+              "hit_cache_copy": 4.370169000026181,
+              "hit_suffix_prefill": 31.923345000109293,
+              "first_token_selection": 0.07640300009370549,
+              "decode": 91.70286699998087
+            }
+          },
+          {
+            "request_index": 38,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013629000022774562,
+              "hit_cache_copy": 4.520324000054643,
+              "hit_suffix_prefill": 32.094143999984226,
+              "first_token_selection": 0.08843799992064305,
+              "decode": 91.745842000023
+            }
+          },
+          {
+            "request_index": 39,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.020992999907321064,
+              "eviction_decision": 0.13481499991030432,
+              "full_prefill": 35.350423999943814,
+              "retain_prefix_copy": 5.628619999924922,
+              "first_token_selection": 0.0794740000173988,
+              "decode": 96.03518400001576
+            }
+          },
+          {
+            "request_index": 40,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014101000033406308,
+              "eviction_decision": 0.11492399994494917,
+              "full_prefill": 35.32756499998868,
+              "retain_prefix_copy": 5.419040999981917,
+              "first_token_selection": 0.08138900000176363,
+              "decode": 90.53593399994497
+            }
+          },
+          {
+            "request_index": 41,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.029678000032618,
+              "hit_cache_copy": 5.567497000015464,
+              "hit_suffix_prefill": 32.905994999964605,
+              "first_token_selection": 0.08972199998424912,
+              "decode": 91.0597349999307
+            }
+          },
+          {
+            "request_index": 42,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013852999927621568,
+              "eviction_decision": 0.1931340000282944,
+              "full_prefill": 35.39224500002547,
+              "retain_prefix_copy": 5.778867000003629,
+              "first_token_selection": 0.09615700002996164,
+              "decode": 106.56137399996624
+            }
+          },
+          {
+            "request_index": 43,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01253799996447924,
+              "eviction_decision": 0.2593949999436518,
+              "full_prefill": 36.95862299991859,
+              "retain_prefix_copy": 5.4479330000276605,
+              "first_token_selection": 0.07786000003306981,
+              "decode": 91.43545199992786
+            }
+          },
+          {
+            "request_index": 44,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.014104000001680106,
+              "eviction_decision": 0.010775999953693827,
+              "full_prefill": 42.08366599993951,
+              "retain_prefix_copy": 5.394598999941991,
+              "first_token_selection": 0.08072399998582114,
+              "decode": 90.9799920000296
+            }
+          },
+          {
+            "request_index": 45,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013631000001623761,
+              "hit_cache_copy": 4.520191999972667,
+              "hit_suffix_prefill": 33.00056700004461,
+              "first_token_selection": 0.08716000002095825,
+              "decode": 90.92402199996741
+            }
+          },
+          {
+            "request_index": 46,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013652000006914022,
+              "hit_cache_copy": 4.512420999958522,
+              "hit_suffix_prefill": 33.6897660000659,
+              "first_token_selection": 0.08178299992778193,
+              "decode": 92.05910599996514
+            }
+          },
+          {
+            "request_index": 47,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013182999964556075,
+              "eviction_decision": 0.2419909999389347,
+              "full_prefill": 47.54672799992932,
+              "retain_prefix_copy": 5.54411199993865,
+              "first_token_selection": 0.08077199993294926,
+              "decode": 90.46255199996267
+            }
+          },
+          {
+            "request_index": 48,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.017202000094584946,
+              "hit_cache_copy": 4.912130999969122,
+              "hit_suffix_prefill": 32.804321999947206,
+              "first_token_selection": 0.08554900000490306,
+              "decode": 90.2449230000002
+            }
+          },
+          {
+            "request_index": 49,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01368600010209775,
+              "hit_cache_copy": 4.558032000090861,
+              "hit_suffix_prefill": 32.66962800000783,
+              "first_token_selection": 0.10851299998648756,
+              "decode": 97.6374089999581
+            }
+          },
+          {
+            "request_index": 50,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.02076800001304946,
+              "hit_cache_copy": 9.45526800001062,
+              "hit_suffix_prefill": 39.44442799991066,
+              "first_token_selection": 0.10086999998293322,
+              "decode": 90.38583500000641
+            }
+          },
+          {
+            "request_index": 51,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.0159570000732856,
+              "eviction_decision": 0.12369600005968096,
+              "full_prefill": 34.631885000067086,
+              "retain_prefix_copy": 6.248575000086021,
+              "first_token_selection": 0.08135799998854054,
+              "decode": 96.65822200008733
+            }
+          },
+          {
+            "request_index": 52,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.012396999977681844,
+              "eviction_decision": 0.010282000062034058,
+              "full_prefill": 34.265616000084265,
+              "retain_prefix_copy": 5.857880999997178,
+              "first_token_selection": 0.07696899990605743,
+              "decode": 89.87561399999322
+            }
+          },
+          {
+            "request_index": 53,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01350699994873139,
+              "eviction_decision": 0.14301299995622685,
+              "full_prefill": 35.29027600006884,
+              "retain_prefix_copy": 5.807769999933043,
+              "first_token_selection": 0.08154299996476766,
+              "decode": 104.5484830000305
+            }
+          },
+          {
+            "request_index": 54,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013562999924943142,
+              "hit_cache_copy": 5.085050999923624,
+              "hit_suffix_prefill": 32.29640799997924,
+              "first_token_selection": 0.08134399990922248,
+              "decode": 91.53493400003754
+            }
+          },
+          {
+            "request_index": 55,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.013747000025432499,
+              "hit_cache_copy": 4.579854999974486,
+              "hit_suffix_prefill": 31.743749000042953,
+              "first_token_selection": 0.07962900008351426,
+              "decode": 92.14728300003117
+            }
+          },
+          {
+            "request_index": 56,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.01372200006244384,
+              "eviction_decision": 0.12190500001452165,
+              "full_prefill": 39.20080800003234,
+              "retain_prefix_copy": 5.57230399999753,
+              "first_token_selection": 0.077780000083294,
+              "decode": 89.44466800005557
+            }
+          },
+          {
+            "request_index": 57,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.015151999946283468,
+              "hit_cache_copy": 4.766747999951804,
+              "hit_suffix_prefill": 32.4488899999551,
+              "first_token_selection": 0.0817989999859492,
+              "decode": 105.9805800000504
+            }
+          },
+          {
+            "request_index": 58,
+            "cache_hit": false,
+            "stages_ms": {
+              "cache_lookup": 0.013989000080982805,
+              "eviction_decision": 0.14280799996413407,
+              "full_prefill": 34.01453000003585,
+              "retain_prefix_copy": 5.405053000004045,
+              "first_token_selection": 0.07714900004884839,
+              "decode": 94.62109699995835
+            }
+          },
+          {
+            "request_index": 59,
+            "cache_hit": true,
+            "stages_ms": {
+              "cache_lookup": 0.01897800007100159,
+              "hit_cache_copy": 4.629113000078178,
+              "hit_suffix_prefill": 31.696383000053174,
+              "first_token_selection": 0.0799630000756224,
+              "decode": 92.43143800006237
+            }
+          }
+        ]
+      },
+      "device": "cuda",
+      "policy": "fifo",
+      "requests": 60,
+      "model_type": "llama",
+      "random_weights": false,
+      "torch_version": "2.11.0+cu130",
+      "transformers_version": "4.57.6",
+      "hardware": "Tesla T4",
+      "dtype": "torch.float32",
+      "batch_size": 1,
+      "concurrency": 1,
+      "fixed_output_tokens": 4,
+      "hits": 29,
+      "hit_rate": 0.48333333333333334,
+      "reused_prefix_tokens": 2912,
+      "prefix_token_reuse_rate": 0.4918918918918919,
+      "ttft_p50_ms": 40.550203500004045,
+      "ttft_p95_ms": 50.624178800006796,
+      "request_p95_ms": 146.11819169999762,
+      "measured_requests_per_second": 7.4326358555570256,
+      "measured_output_tokens_per_second": 29.730543422228102,
+      "retained_peak_bytes": 32440320,
+      "cache_budget_bytes": 33554432,
+      "cuda_peak_allocated_bytes": 653106688,
+      "eviction_decision_p95_ms": 0.2772550000145202,
+      "cache_hit_by_request": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        false,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+        true
+      ],
+      "generated_token_ids": [
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          8262,
+          274,
+          86,
+          2178
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          8262,
+          8262,
+          8262,
+          8262
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          43284,
+          43284,
+          43284,
+          43284
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          20538,
+          20538,
+          20538
+        ],
+        [
+          6,
+          47224,
+          47224,
+          31390
+        ],
+        [
+          47224,
+          28,
+          3297,
+          28
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          47224,
+          28,
+          3297,
+          28
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          28,
+          20538,
+          28
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          26649,
+          272,
+          24014,
+          67
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          26649,
+          456,
+          6322,
+          9578
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          47224,
+          47224,
+          31390,
+          20538
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          26649,
+          456,
+          6322,
+          9578
+        ],
+        [
+          6,
+          41809,
+          6,
+          41809
+        ],
+        [
+          2660,
+          739,
+          2660,
+          739
+        ],
+        [
+          8262,
+          274,
+          8262,
+          274
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          26649,
+          456,
+          10426,
+          456
+        ],
+        [
+          2660,
+          739,
+          924,
+          64
+        ],
+        [
+          6,
+          47224,
+          47224,
+          31390
+        ],
+        [
+          6,
+          6,
+          6,
+          6
+        ]
+      ],
+      "output_sha256": "7aec2183cf154ab976bdf98508a4559f35375eb11dd87508daf598a6b301c8b6",
+      "evictions": 23,
+      "repeat": 0,
+      "model": "HuggingFaceTB/SmolLM2-135M"
+    }
+  ]
+}
