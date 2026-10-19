@@ -7,3 +7,4 @@ dist/
 results/
 .DS_Store
 .colab-venv/
+source-manifest.json

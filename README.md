@@ -220,3 +220,9 @@ This is a sequential research harness, not a production inference server:
 
 The project evaluates a simplified learned policy; it does not claim to invent
 prefix caching or learned eviction.
+
+## Local inference service (new)
+
+The project now includes a persistent FastAPI token-inference service, bounded request admission, Prometheus metrics, provisioned Grafana dashboard, Docker Compose configuration, and a restart-isolated HTTP evaluation runner. The experimental sliced-prefix retention copy is compared against the original copy path; no GPU speedup is claimed.
+
+See [serving instructions and limitations](docs/serving.md). Use [the GPU serving notebook](notebooks/gpu_serving.ipynb) which downloads the project directly from GitHub and needs no Google Drive storage. An optional offline source bundle can be built with `python scripts/package_serving.py`. Real GPU serving validation remains pending; existing offline GPU results are not serving results.

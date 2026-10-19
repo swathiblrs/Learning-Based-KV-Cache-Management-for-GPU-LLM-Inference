@@ -1,0 +1,9 @@
+services:
+  inference:
+    gpus: all
+    environment:
+      KV_DEVICE: cuda
+      KV_TINY: "0"
+      KV_POLICY: learned
+      KV_PREDICTOR: /models/predictor.json
+      KV_BUDGET_BYTES: "33554432"

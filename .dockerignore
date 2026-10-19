@@ -1,0 +1,6 @@
+.git
+.venv
+results
+benchmarks
+__pycache__
+*.zip

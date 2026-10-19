@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "device": "cpu",
+  "model": "random-tiny-llama",
+  "purpose": "HTTP correctness and queueing smoke test, not GPU performance evidence",
+  "requests_per_configuration": 6,
+  "configurations": 10,
+  "request_executions": 60,
+  "concurrency": [
+    1,
+    2
+  ],
+  "policies": [
+    "none",
+    "lru",
+    "learned"
+  ],
+  "copy_modes": [
+    "baseline",
+    "sliced"
+  ],
+  "all_outputs_match": true,
+  "raw_archive_sha256": "8ad62c486b674ba2be9cf6635055e70eb551343a2bda9ac7a701f5af38c61f3a",
+  "limitations": [
+    "Docker runtime unavailable; monitoring stack not started",
+    "NVIDIA GPU serving validation pending",
+    "CPU timing is not a model serving performance claim"
+  ]
+}
