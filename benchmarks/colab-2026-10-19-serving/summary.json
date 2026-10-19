@@ -1,0 +1,82 @@
+{
+  "status": "passed",
+  "config": {
+    "predictor": "results/experiment/predictor.json",
+    "output": "/content/kv-serving-20261019-003422-632047",
+    "device": "cuda",
+    "model": "HuggingFaceTB/SmolLM2-135M",
+    "tiny": false,
+    "requests": 30,
+    "new_tokens": 4,
+    "seed": 99,
+    "workload": "hot",
+    "budget_mib": 32.0,
+    "concurrency": [
+      1
+    ],
+    "repeats": 1,
+    "policies": [
+      "none",
+      "lru",
+      "learned"
+    ],
+    "copy_modes": [
+      "baseline",
+      "sliced"
+    ]
+  },
+  "source_commit": "8f636edeed71a0f91342166e507854214a9f1c03",
+  "archive_sha256": "b653bb326a1831b9cc7e33cf68a27975282d98c5c755e9f56f81cd4629f85cb7",
+  "completed": [
+    {
+      "label": "none-baseline-c1-r0",
+      "correctness": {
+        "status": "passed",
+        "mismatch_indices": []
+      },
+      "hit_rate": 0.0,
+      "http_p95_ms": 143.40433440000876,
+      "requests_per_second": 7.512397538751213
+    },
+    {
+      "label": "lru-sliced-c1-r0",
+      "correctness": {
+        "status": "passed",
+        "mismatch_indices": []
+      },
+      "hit_rate": 0.4,
+      "http_p95_ms": 152.83032865000905,
+      "requests_per_second": 7.266393225572249
+    },
+    {
+      "label": "learned-baseline-c1-r0",
+      "correctness": {
+        "status": "passed",
+        "mismatch_indices": []
+      },
+      "hit_rate": 0.4666666666666667,
+      "http_p95_ms": 159.37890780002704,
+      "requests_per_second": 7.203238132144666
+    },
+    {
+      "label": "learned-sliced-c1-r0",
+      "correctness": {
+        "status": "passed",
+        "mismatch_indices": []
+      },
+      "hit_rate": 0.4666666666666667,
+      "http_p95_ms": 154.3563581000171,
+      "requests_per_second": 7.402066151407076
+    },
+    {
+      "label": "lru-baseline-c1-r0",
+      "correctness": {
+        "status": "passed",
+        "mismatch_indices": []
+      },
+      "hit_rate": 0.4,
+      "http_p95_ms": 152.30028560000048,
+      "requests_per_second": 7.3363972320942645
+    }
+  ]
+}
