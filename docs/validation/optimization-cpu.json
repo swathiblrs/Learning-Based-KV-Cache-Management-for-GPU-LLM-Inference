@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "model": "random-tiny-llama",
+  "device": "cpu",
+  "http_configurations": 7,
+  "oracle_runs": 1,
+  "requests_per_run": 8,
+  "request_executions": 64,
+  "correctness": "all outputs matched full-logits no-cache oracle",
+  "stage_profiling": false,
+  "gpu_performance": "pending",
+  "note": "CPU smoke test only; not performance evidence"
+}

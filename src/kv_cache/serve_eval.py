@@ -1,6 +1,7 @@
 """Restart-isolated HTTP load evaluation; checkpoint each completed configuration."""
 import argparse
 import asyncio
+import copy
 import hashlib
 import json
 import os
@@ -15,7 +16,7 @@ import httpx
 import numpy as np
 from .cli import dump
 from .inference import token_ids
-from .traces import generate
+from .traces import generate, Request
 
 
 async def load(url, payloads, concurrency):
@@ -35,13 +36,14 @@ async def load(url, payloads, concurrency):
     return dict(requests=rows, elapsed_seconds=seconds,
                 requests_per_second=len(rows)/seconds,
                 output_tokens_per_second=sum(len(r["token_ids"]) for r in rows)/seconds,
+                http_mean_ms=float(np.mean([r["http_ms"] for r in rows])),
                 http_p95_ms=float(np.percentile([r["http_ms"] for r in rows],95)),
                 compute_ttft_p95_ms=float(np.percentile([r["compute_ttft_ms"] for r in rows],95)),
                 queue_p95_ms=float(np.percentile([r["queue_ms"] for r in rows],95)),
                 hit_rate=sum(r["cache_hit"] for r in rows)/len(rows)), metrics
 
 
-def run_configuration(args, policy, mode, concurrency, repeat, payloads, out):
+def run_configuration(args, policy, mode, concurrency, repeat, payloads, out, label_suffix=""):
     # Bind a loopback port chosen by the OS; no public tunnel.
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
@@ -51,8 +53,12 @@ def run_configuration(args, policy, mode, concurrency, repeat, payloads, out):
                KV_TINY="1" if args.tiny else "0", KV_MODEL=args.model,
                KV_BUDGET_BYTES=str(int(args.budget_mib*1024**2)),
                KV_PREDICTOR=str(Path(args.predictor).resolve()),
-               KV_MAX_PENDING=str(max(8,concurrency)), USE_TF="0", OMP_NUM_THREADS="1")
-    label = f"{policy}-{mode}-c{concurrency}-r{repeat}"
+               KV_MAX_PENDING=str(max(8,concurrency)),
+               KV_PROFILE_STAGES="1" if args.profile_stages else "0",
+               KV_LOGITS_MODE=args.logits_mode,
+               KV_WARMUP_TOKENS=str(max(len(p["prefix_ids"])+len(p["suffix_ids"]) for p in payloads)),
+               USE_TF="0", OMP_NUM_THREADS="1")
+    label = f"{policy}-{mode}-c{concurrency}-r{repeat}{label_suffix}"
     url = f"http://127.0.0.1:{port}"
     with (out/f"{label}.log").open("w") as log:
         process = subprocess.Popen([sys.executable,"-m","uvicorn","kv_cache.serving:create_app",
@@ -97,15 +103,23 @@ def main():
     p.add_argument("--requests",type=int,default=30)
     p.add_argument("--new-tokens",type=int,default=4)
     p.add_argument("--seed",type=int,default=99)
+    p.add_argument("--prefix-tokens",type=int,default=0,help="0 preserves original variable lengths; otherwise a distinct fixed-length workload")
+    p.add_argument("--profile-stages",action=argparse.BooleanOptionalAction,default=True)
+    p.add_argument("--logits-mode",choices=("all","last"),default="all")
+    p.add_argument("--reference-full-logits",action="store_true",help="Check against independent no-cache full-logits oracle before randomized timed runs")
     p.add_argument("--workload",choices=("hot","shift","scan"),default="hot")
     p.add_argument("--budget-mib",type=float,default=32)
     p.add_argument("--concurrency",type=int,nargs="+",default=[1,4])
     p.add_argument("--repeats",type=int,default=1)
     p.add_argument("--policies",nargs="+",choices=("none","fifo","lru","lfu","learned"),default=["none","lru","learned"])
-    p.add_argument("--copy-modes",nargs="+",choices=("baseline","sliced"),default=["baseline","sliced"])
+    p.add_argument("--copy-modes",nargs="+",choices=("baseline","sliced","shared"),default=["baseline","sliced"])
     args = p.parse_args()
     if min(args.requests,args.repeats,*args.concurrency,args.new_tokens)<1 or args.new_tokens>64 or args.budget_mib<0:
         p.error("Invalid counts or budget")
+    if not 0 <= args.prefix_tokens <= 2040:
+        p.error("prefix-tokens must be 0..2040 (API includes an 8-token suffix)")
+    if len(set(args.copy_modes)) != len(args.copy_modes) or len(set(args.concurrency)) != len(args.concurrency):
+        p.error("Duplicate configurations would overwrite reports")
     out = Path(args.output)
     if out.exists():
         p.error("Output directory already exists; choose a new path to preserve prior runs")
@@ -118,12 +132,14 @@ def main():
         from transformers import AutoConfig
         vocab = AutoConfig.from_pretrained(args.model).vocab_size
     trace = generate(args.requests,args.seed,args.workload)
+    if args.prefix_tokens:
+        trace = [Request(r.prefix,args.prefix_tokens) for r in trace]
     payloads = [dict(prefix_ids=token_ids(r,vocab).tolist()[0],suffix_ids=list(range(3,11)),new_tokens=args.new_tokens) for r in trace]
     dump(out/"requests.json",payloads)
     manifest = dict(schema=1,status="running",config=vars(args),completed=[],
                     predictor_sha256=hashlib.sha256(Path(args.predictor).read_bytes()).hexdigest(),
                     trace_sha256=hashlib.sha256(json.dumps(payloads,sort_keys=True).encode()).hexdigest(),
-                    note="Synthetic tokens; instrumented nonstreaming service. Concurrency changes arrival order, not model batching. Compare policy performance at concurrency=1; concurrent runs measure queueing and correctness.")
+                    note="Synthetic tokens; nonstreaming service. See config/profile_stages and per-run timing metadata. Concurrency changes arrival order, not model batching. Compare policy performance at concurrency=1; concurrent runs measure queueing and correctness.")
     try:
         manifest["git_commit"] = subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip()
         manifest["git_dirty"] = bool(subprocess.check_output(["git","status","--porcelain"],text=True).strip())
@@ -138,19 +154,35 @@ def main():
     checkpoint()
     reference = None
     try:
+        if args.reference_full_logits:
+            oracle_args = copy.copy(args)
+            oracle_args.logits_mode = "all"
+            print("Checking independent no-cache full-logits reference",flush=True)
+            oracle = run_configuration(oracle_args,"none","baseline",1,0,payloads,out,"-oracle")
+            reference = [r["token_ids"] for r in oracle["requests"]]
+            manifest["oracle"] = oracle["label"]
+            checkpoint()
         for repeat in range(args.repeats):
             for concurrency in args.concurrency:
                 configs = [(policy,mode) for policy in dict.fromkeys(["none"]+args.policies)
                            for mode in (["baseline"] if policy=="none" else args.copy_modes)]
-                # Reference first; rotate remaining configurations to reduce fixed-order bias.
-                tail = configs[1:]
-                np.random.default_rng(args.seed+repeat+concurrency).shuffle(tail)
-                for policy,mode in configs[:1]+tail:
+                # With a separate oracle, randomize no-cache too to avoid always
+                # measuring it in the same thermal/order position.
+                rng = np.random.default_rng(args.seed+repeat+concurrency)
+                if args.reference_full_logits:
+                    rng.shuffle(configs)
+                else:
+                    tail = configs[1:]
+                    rng.shuffle(tail)
+                    configs = configs[:1]+tail
+                for policy,mode in configs:
                     print(f"Running {policy}/{mode}, concurrency={concurrency}, repeat={repeat}",flush=True)
                     report = run_configuration(args,policy,mode,concurrency,repeat,payloads,out)
                     outputs = [r["token_ids"] for r in report["requests"]]
                     if reference is None:
                         reference = outputs
+                    if len(outputs) != len(reference):
+                        raise RuntimeError("Output count differs from reference")
                     mismatch = [i for i,(a,b) in enumerate(zip(reference,outputs)) if a!=b]
                     report["correctness"] = dict(status="failed" if mismatch else "passed",mismatch_indices=mismatch)
                     dump(out/(report["label"]+".json"),report)

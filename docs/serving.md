@@ -58,3 +58,18 @@ Use concurrency=1 for controlled eviction-policy comparisons: the same request o
 ## Validation status
 
 Automated tests cover all policies and both copy modes on a tiny CPU model, immutable prefix storage, eviction budgets, invalid IDs/context, metrics, queue overload and unhealthy readiness after failure. Real HTTP smoke evaluation and GPU results must be distinguished from unit tests. Docker/Grafana deployment and real NVIDIA model validation require their corresponding runtime; do not describe their configuration files as an already-running production system.
+
+
+## Optimization experiment (GPU result pending)
+
+Open `notebooks/gpu_optimization.ipynb`. It uses concurrency 1, 60 requests per trace and three repeats. The seven timed configurations are no-cache plus LRU/learned with baseline, sliced and shared copy paths. One independent full-logits no-cache run supplies the strict output oracle. This totals 22 runs / 1,320 request executions. All configurations include a two-pass warmup at the largest input length before timing. No-cache is included in the shuffled configuration order on each repeat.
+
+- `--no-profile-stages` / `KV_PROFILE_STAGES=0` disables synchronized stage instrumentation. Request-boundary/first-token synchronization and lightweight Prometheus collection remain. Missing stage histograms mean disabled, not zero work.
+- `--logits-mode last` / `KV_LOGITS_MODE=last` computes only the final position's logits, equally for cached and no-cache policies. Strict generated-token checks against the full-logits reference remain mandatory because changes in matrix shape can change numerical results.
+- `--copy-modes shared` / `KV_COPY_MODE=shared` clones retained prefix slices once on a miss. On a hit, it creates separate cache/layer wrappers referring to the immutable resident tensors. Transformers DynamicLayer.update concatenates into fresh tensors and rebinds only the request-local wrapper, avoiding a preliminary deep copy. There is still concatenation and active-KV copying: this is not zero-copy/paged attention. Version and exact cache-layer type guards restrict this path to full-attention Llama / Transformers 4.57.x. The serving extra is pinned to that minor version. CPU tests verify unchanged resident tensor values and lengths across varied suffixes and decode lengths.
+
+`python -m kv_cache.serve_summary RESULTS_DIRECTORY` reports the median of per-run p95s and paired per-repeat reductions relative to no-cache. Positive means faster in that comparison. Negative means slower; do not select only positive repeats. The full-logits oracle is excluded from timing comparisons. No speedup is established until new GPU results pass correctness and repeated timing evaluation.
+
+The default retains the existing short-prefix workload. A separate `--prefix-tokens 1024 --budget-mib 256` experiment can locate a longer-prefix operating regime. SmolLM2-135M float32 uses 46,080 KV bytes per prefix token (45 MiB at 1,024 tokens), so the old 32 MiB budget would admit no such prefix. Increasing length/budget changes the workload and must be reported as such. Length 1,024 is outside the reuse predictor's original 32–256 training range. Do not use that result as a replacement for the original workload or tune on reported held-out traces.
+
+The prior concurrency-1 and concurrency-4 GPU smoke results are preserved separately in `benchmarks/`. New timing mode, logit scope and warmup changes mean the new results must be compared to their own matched no-cache baseline, not directly to historical timings.

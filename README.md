@@ -226,3 +226,7 @@ prefix caching or learned eviction.
 The project now includes a persistent FastAPI token-inference service, bounded request admission, Prometheus metrics, provisioned Grafana dashboard, Docker Compose configuration, and a restart-isolated HTTP evaluation runner. The experimental sliced-prefix retention copy is compared against the original copy path; no GPU speedup is claimed.
 
 See [serving instructions and limitations](docs/serving.md). Use [the GPU serving notebook](notebooks/gpu_serving.ipynb) which downloads the project directly from GitHub and needs no Google Drive storage. An optional offline source bundle can be built with `python scripts/package_serving.py`. The first GPU HTTP smoke check passed all 150 output-equivalence checks; see [results and limitations](benchmarks/colab-2026-10-19-serving/README.md). Next run the [concurrency-4 notebook](notebooks/gpu_serving_concurrency.ipynb). Existing offline GPU results are separate from serving results.
+
+### Next optimization experiment
+
+[GPU optimization notebook](notebooks/gpu_optimization.ipynb) compares immutable-prefix sharing, original copying and sliced copying with stage timers disabled and matched final-token-only logits. It includes an independent full-logits correctness oracle and shuffled timing repeats. The CPU checks pass; GPU speedup remains unverified. See [experiment controls and limitations](docs/serving.md#optimization-experiment-gpu-result-pending). The [concurrency-4 smoke results](benchmarks/colab-2026-10-19-concurrency/README.md) are also archived.

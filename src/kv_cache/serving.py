@@ -25,14 +25,19 @@ class Settings:
     predictor: str = ""
     tiny: bool = False
     copy_mode: str = "baseline"
+    profile_stages: bool = True
+    logits_mode: str = "all"
+    warmup_tokens: int = 3
     max_pending: int = 8
     max_prefixes: int = 10000
 
     def __post_init__(self):
         if self.device not in ("cpu", "cuda") or self.policy not in ("none", "fifo", "lru", "lfu", "learned"):
             raise ValueError("Invalid device/policy")
-        if self.copy_mode not in ("baseline", "sliced") or self.budget_bytes < 0:
+        if self.copy_mode not in ("baseline", "sliced", "shared") or self.budget_bytes < 0:
             raise ValueError("Invalid copy mode/budget")
+        if self.logits_mode not in ("all", "last") or not 1 <= self.warmup_tokens <= 2048:
+            raise ValueError("Invalid logits mode or warmup length")
         if self.max_pending < 1 or self.max_prefixes < 1:
             raise ValueError("Limits must be positive")
         if self.policy == "learned" and not self.predictor:
@@ -44,6 +49,9 @@ class Settings:
                    policy=os.getenv("KV_POLICY", "lru"), budget_bytes=int(os.getenv("KV_BUDGET_BYTES", str(32*1024**2))),
                    predictor=os.getenv("KV_PREDICTOR", ""), tiny=os.getenv("KV_TINY", "0") == "1",
                    copy_mode=os.getenv("KV_COPY_MODE", "baseline"),
+                   profile_stages=os.getenv("KV_PROFILE_STAGES", "1") == "1",
+                   logits_mode=os.getenv("KV_LOGITS_MODE", "all"),
+                   warmup_tokens=int(os.getenv("KV_WARMUP_TOKENS", "3")),
                    max_pending=int(os.getenv("KV_MAX_PENDING", "8")),
                    max_prefixes=int(os.getenv("KV_MAX_PREFIXES", "10000")))
 
@@ -61,10 +69,34 @@ def clone_prefix(past, tokens, mode):
             layer.keys = layer.keys.clone()
             layer.values = layer.values.clone()
         return result
+    if mode == "shared":
+        # Reuse only metadata here. Resident prefix tensors still own storage.
+        result = fork_prefix(past)
+        for layer in result.layers:
+            layer.keys = layer.keys[..., :tokens, :].clone()
+            layer.values = layer.values[..., :tokens, :].clone()
+        return result
     from transformers import DynamicCache
     result = DynamicCache()
     for i, layer in enumerate(past.layers):
         result.update(layer.keys[..., :tokens, :].clone(), layer.values[..., :tokens, :].clone(), i)
+    return result
+
+
+def fork_prefix(past):
+    """Request-local wrapper sharing immutable tensors, restricted to DynamicLayer.
+
+    Transformers 4.57 DynamicLayer.update replaces tensors with torch.cat; it
+    does not write into the previous tensor storage. Only full-attention Llama
+    is supported for this opt-in path. No crop/reset/in-place writes may run on
+    these wrappers. Retention still owns cloned tensors; this is not paged KV.
+    """
+    from transformers import DynamicCache
+    from transformers.cache_utils import DynamicLayer
+    if type(past) is not DynamicCache or any(type(layer) is not DynamicLayer for layer in past.layers):
+        raise RuntimeError("Shared prefix requires full-attention DynamicCache/DynamicLayer")
+    result = copy.copy(past)
+    result.layers = [copy.copy(layer) for layer in past.layers]
     return result
 
 
@@ -96,11 +128,14 @@ class Metrics:
 
 
 class Timer:
-    def __init__(self, device, metrics):
-        self.device, self.metrics = device, metrics
+    def __init__(self, device, metrics, enabled=True):
+        self.device, self.metrics, self.enabled = device, metrics, enabled
 
     @contextmanager
     def stage(self, name):
+        if not self.enabled:
+            yield
+            return
         sync(self.device)
         start = perf_counter()
         try:
@@ -118,7 +153,15 @@ class Engine:
         if getattr(self.model.config, "sliding_window", None):
             raise ValueError("Only full-attention models supported")
         self.predictor = Predictor.load(settings.predictor) if settings.predictor else None
-        self.timer = Timer(settings.device, metrics)
+        if settings.copy_mode == "shared":
+            if self.model.config.model_type != "llama" or not version("transformers").startswith("4.57."):
+                raise ValueError("Shared prefix path is validated only for Llama with Transformers 4.57.x")
+        if settings.logits_mode == "last":
+            import inspect
+            if "logits_to_keep" not in inspect.signature(self.model.forward).parameters:
+                raise ValueError("Model does not support logits_to_keep")
+        self.forward_options = {"logits_to_keep": 1} if settings.logits_mode == "last" else {}
+        self.timer = Timer(settings.device, metrics, settings.profile_stages)
         self.cache = PrefixCache(settings.budget_bytes, settings.policy, self.predictor, self.timer)
         self.lock, self.step = threading.Lock(), 0
         self.metrics.budget.set(settings.budget_bytes)
@@ -128,10 +171,19 @@ class Engine:
             policy=settings.policy, budget_bytes=settings.budget_bytes, device=settings.device,
             dtype="float32", copy_mode=settings.copy_mode, torch_version=torch.__version__,
             packages={name: version(name) for name in ("transformers", "numpy", "fastapi", "uvicorn", "prometheus-client")},
-            timing_is_instrumented=True, batching=False, model_concurrency=1)
+            timing_is_instrumented=settings.profile_stages, logits_mode=settings.logits_mode,
+            warmup_tokens=settings.warmup_tokens,
+            hardware=torch.cuda.get_device_name() if settings.device == "cuda" else "CPU",
+            timing_note="Request-boundary and first-token synchronization retained; stage timers optional",
+            batching=False, model_concurrency=1)
         # Warm model without modifying cache history.
         with torch.inference_mode():
-            self.model(torch.tensor([[3,4,5]], device=settings.device), use_cache=True)
+            if settings.warmup_tokens >= self.model.config.max_position_embeddings:
+                raise ValueError("Warmup exceeds model context")
+            for _ in range(2):
+                warm = self.model(torch.full((1,settings.warmup_tokens), 3, device=settings.device),
+                                  use_cache=True, **self.forward_options)
+                del warm
         sync(settings.device)
 
     def generate(self, prefix_ids, suffix_ids, new_tokens):
@@ -163,9 +215,9 @@ class Engine:
                 self.metrics.hits.labels("hit" if hit else "miss").inc()
                 if hit:
                     with self.timer.stage("hit_copy"):
-                        past = copy.deepcopy(entry.payload)
+                        past = fork_prefix(entry.payload) if self.settings.copy_mode == "shared" else copy.deepcopy(entry.payload)
                     with self.timer.stage("prefill"):
-                        out = self.model(suffix, past_key_values=past, use_cache=True)
+                        out = self.model(suffix, past_key_values=past, use_cache=True, **self.forward_options)
                 else:
                     heads = getattr(c, "num_key_value_heads", c.num_attention_heads)
                     dim = getattr(c, "head_dim", None) or c.hidden_size // c.num_attention_heads
@@ -175,7 +227,7 @@ class Engine:
                     # Cache decision samples are exported to histograms, not kept forever.
                     self.cache.decision_ms.clear()
                     with self.timer.stage("prefill"):
-                        out = self.model(torch.cat((prefix, suffix), dim=1), use_cache=True)
+                        out = self.model(torch.cat((prefix, suffix), dim=1), use_cache=True, **self.forward_options)
                     if retain:
                         with self.timer.stage("retain_copy"):
                             retained = clone_prefix(out.past_key_values, len(prefix_ids), self.settings.copy_mode)
@@ -188,7 +240,7 @@ class Engine:
                 ttft = perf_counter()-compute_start
                 with self.timer.stage("decode"):
                     for _ in range(new_tokens-1):
-                        out = self.model(token, past_key_values=out.past_key_values, use_cache=True)
+                        out = self.model(token, past_key_values=out.past_key_values, use_cache=True, **self.forward_options)
                         token = out.logits[:, -1].argmax(dim=-1, keepdim=True)
                         generated.append(token)
                 ids = torch.cat(generated, dim=1).cpu().tolist()[0]

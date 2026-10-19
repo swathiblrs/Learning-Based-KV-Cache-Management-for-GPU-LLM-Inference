@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "config": {
+    "predictor": "results/experiment/predictor.json",
+    "output": "/content/kv-serving-20261019-152151-942435",
+    "device": "cuda",
+    "model": "HuggingFaceTB/SmolLM2-135M",
+    "tiny": false,
+    "requests": 30,
+    "new_tokens": 4,
+    "seed": 99,
+    "workload": "hot",
+    "budget_mib": 32.0,
+    "concurrency": [
+      4
+    ],
+    "repeats": 1,
+    "policies": [
+      "none",
+      "lru",
+      "learned"
+    ],
+    "copy_modes": [
+      "baseline",
+      "sliced"
+    ]
+  },
+  "completed": [
+    {
+      "label": "none-baseline-c4-r0",
+      "correctness": {
+        "status": "passed",
+        "mismatch_indices": []
+      },
+      "hit_rate": 0.0,
+      "http_p95_ms": 548.9158424000294,
+      "requests_per_second": 7.622137789537903
+    },
+    {
+      "label": "lru-baseline-c4-r0",
+      "correctness": {
+        "status": "passed",
+        "mismatch_indices": []
+      },
+      "hit_rate": 0.4,
+      "http_p95_ms": 607.9401549999915,
+      "requests_per_second": 6.966086915476368
+    },
+    {
+      "label": "learned-sliced-c4-r0",
+      "correctness": {
+        "status": "passed",
+        "mismatch_indices": []
+      },
+      "hit_rate": 0.4666666666666667,
+      "http_p95_ms": 582.482842100012,
+      "requests_per_second": 7.345061547464619
+    },
+    {
+      "label": "learned-baseline-c4-r0",
+      "correctness": {
+        "status": "passed",
+        "mismatch_indices": []
+      },
+      "hit_rate": 0.4666666666666667,
+      "http_p95_ms": 634.9377181999955,
+      "requests_per_second": 6.927276755660422
+    },
+    {
+      "label": "lru-sliced-c4-r0",
+      "correctness": {
+        "status": "passed",
+        "mismatch_indices": []
+      },
+      "hit_rate": 0.4,
+      "http_p95_ms": 557.4066408999897,
+      "requests_per_second": 7.277731548562233
+    }
+  ],
+  "predictor_sha256": "9074f733ed6a7b2b346dab2510c2b239401508fd3b96df982fe1afd1138db082",
+  "trace_sha256": "944b2137f5fa5de5df7f20d0fee617d397af4dd045ee246c0692f95873039bb1",
+  "note": "Synthetic tokens; instrumented nonstreaming service. Concurrency changes arrival order, not model batching. Compare policy performance at concurrency=1; concurrent runs measure queueing and correctness.",
+  "git_commit": "fbce8112c4005e130f38c090dfd407b6bc3b0803",
+  "git_dirty": false,
+  "archive_sha256": "bf727d9eae4fbf748595e1c4b1d48c5bb08f72e8d7cbaf148c251cee821040c1"
+}
