@@ -230,3 +230,9 @@ See [serving instructions and limitations](docs/serving.md). Use [the GPU servin
 ### Next optimization experiment
 
 [GPU optimization notebook](notebooks/gpu_optimization.ipynb) compares immutable-prefix sharing, original copying and sliced copying with stage timers disabled and matched final-token-only logits. It includes an independent full-logits correctness oracle and shuffled timing repeats. The CPU checks pass; GPU speedup remains unverified. See [experiment controls and limitations](docs/serving.md#optimization-experiment-gpu-result-pending). The [concurrency-4 smoke results](benchmarks/colab-2026-10-19-concurrency/README.md) are also archived.
+
+### Deployment and longer prefixes
+
+The [deployment runbook](docs/deployment.md) provides an authenticated CPU container, bounded request bodies, a pinned model revision, and a deployment checker. An external host is still required; no production deployment is claimed. Container CI validates a tiny-model image separately from real-model hosting.
+
+The [long-prefix GPU notebook](notebooks/gpu_long_prefix.ipynb) tests a predeclared 1,024-token workload across three seeds with mean latency, throughput and p95 comparisons. The short-prefix experiment remains a negative result for reliable overall speedup. New GPU results are pending.

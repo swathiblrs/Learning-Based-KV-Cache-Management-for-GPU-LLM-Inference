@@ -1,0 +1,18 @@
+FROM python:3.11-slim
+WORKDIR /app
+ENV PYTHONUNBUFFERED=1 USE_TF=0 HF_HOME=/home/app/.cache/huggingface PORT=8000
+COPY deploy/constraints-cpu.txt /app/constraints.txt
+RUN pip install --no-cache-dir torch==2.11.0 --index-url https://download.pytorch.org/whl/cpu
+COPY pyproject.toml README.md ./
+COPY src ./src
+COPY deploy/models/predictor.json /app/models/predictor.json
+RUN pip install --no-cache-dir -c constraints.txt '.[serving]' && pip freeze > /app/runtime-packages.txt \
+    && useradd --uid 10001 --create-home app \
+    && mkdir -p /home/app/.cache/huggingface && chown -R app:app /home/app/.cache
+ENV KV_MODEL=HuggingFaceTB/SmolLM2-135M KV_MODEL_REVISION=93efa2f097d58c2a74874c7e644dbc9b0cee75a2 \
+    KV_DEVICE=cpu KV_TINY=0 KV_POLICY=learned KV_PREDICTOR=/app/models/predictor.json \
+    KV_REQUIRE_AUTH=1 KV_COPY_MODE=shared KV_LOGITS_MODE=last KV_PROFILE_STAGES=0
+USER app
+EXPOSE 8000
+HEALTHCHECK --interval=30s --start-period=180s CMD python -c "import os,urllib.request; urllib.request.urlopen('http://127.0.0.1:'+os.getenv('PORT','8000')+'/readyz',timeout=5)"
+CMD ["python", "-m", "kv_cache.server"]

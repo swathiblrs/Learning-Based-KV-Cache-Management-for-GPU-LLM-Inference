@@ -1,0 +1,119 @@
+{
+  "status": "passed",
+  "comparison": "same workload, precision, logit scope and timing mode",
+  "note": "Median of per-run p95s, not pooled p95. Positive reduction means faster in that repeat. Few repeats and one synthetic seed do not establish general speedup.",
+  "groups": [
+    {
+      "policy": "learned",
+      "copy_mode": "baseline",
+      "concurrency": 1,
+      "repeats": 3,
+      "median_run_p95_ms": 162.96242905000324,
+      "median_requests_per_second": 6.834584485430847,
+      "median_hit_rate": 0.4666666666666667,
+      "median_paired_p95_reduction_percent": -6.884033672644783,
+      "paired_p95_reduction_percent": [
+        -6.884033672644783,
+        -10.403310729404847,
+        -3.9194327954238397
+      ],
+      "faster_than_no_cache_repeats": 0
+    },
+    {
+      "policy": "learned",
+      "copy_mode": "shared",
+      "concurrency": 1,
+      "repeats": 3,
+      "median_run_p95_ms": 157.68652180001652,
+      "median_requests_per_second": 7.211331617665532,
+      "median_hit_rate": 0.4666666666666667,
+      "median_paired_p95_reduction_percent": -3.4236639945007408,
+      "paired_p95_reduction_percent": [
+        -3.4236639945007408,
+        -10.855803492781204,
+        4.392715409172799
+      ],
+      "faster_than_no_cache_repeats": 1
+    },
+    {
+      "policy": "learned",
+      "copy_mode": "sliced",
+      "concurrency": 1,
+      "repeats": 3,
+      "median_run_p95_ms": 160.2318852499991,
+      "median_requests_per_second": 6.962770916039101,
+      "median_hit_rate": 0.4666666666666667,
+      "median_paired_p95_reduction_percent": -9.073328866985207,
+      "paired_p95_reduction_percent": [
+        -10.93857901157196,
+        -9.073328866985207,
+        3.8646828163688944
+      ],
+      "faster_than_no_cache_repeats": 1
+    },
+    {
+      "policy": "lru",
+      "copy_mode": "baseline",
+      "concurrency": 1,
+      "repeats": 3,
+      "median_run_p95_ms": 154.20812810000652,
+      "median_requests_per_second": 7.2787558488815725,
+      "median_hit_rate": 0.48333333333333334,
+      "median_paired_p95_reduction_percent": -1.1422501034221626,
+      "paired_p95_reduction_percent": [
+        -1.1422501034221626,
+        -2.4669384704914035,
+        -0.7100543936491505
+      ],
+      "faster_than_no_cache_repeats": 0
+    },
+    {
+      "policy": "lru",
+      "copy_mode": "shared",
+      "concurrency": 1,
+      "repeats": 3,
+      "median_run_p95_ms": 152.17930899997327,
+      "median_requests_per_second": 7.367820501711739,
+      "median_hit_rate": 0.48333333333333334,
+      "median_paired_p95_reduction_percent": 0.18841470237255706,
+      "paired_p95_reduction_percent": [
+        0.18841470237255706,
+        -4.43438462956696,
+        14.166346671888522
+      ],
+      "faster_than_no_cache_repeats": 2
+    },
+    {
+      "policy": "lru",
+      "copy_mode": "sliced",
+      "concurrency": 1,
+      "repeats": 3,
+      "median_run_p95_ms": 151.05562899999532,
+      "median_requests_per_second": 7.339922850934569,
+      "median_hit_rate": 0.48333333333333334,
+      "median_paired_p95_reduction_percent": -2.8268516807324433,
+      "paired_p95_reduction_percent": [
+        -7.538561970010761,
+        -2.8268516807324433,
+        7.089131245639416
+      ],
+      "faster_than_no_cache_repeats": 1
+    },
+    {
+      "policy": "none",
+      "copy_mode": "baseline",
+      "concurrency": 1,
+      "repeats": 3,
+      "median_run_p95_ms": 152.46657844997742,
+      "median_requests_per_second": 7.509614647871652,
+      "median_hit_rate": 0.0,
+      "median_paired_p95_reduction_percent": 0.0,
+      "paired_p95_reduction_percent": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "faster_than_no_cache_repeats": 0
+    }
+  ]
+}

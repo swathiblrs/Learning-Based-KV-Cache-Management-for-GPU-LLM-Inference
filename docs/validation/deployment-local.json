@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "scope": "authenticated localhost tiny-model service; not external deployment",
+  "checks": [
+    "public health/readiness",
+    "unauthenticated info rejected",
+    "authenticated generation",
+    "repeated output equivalence",
+    "prefix reuse",
+    "Prometheus export"
+  ],
+  "external_host": "not selected",
+  "container_build": "pending CI"
+}

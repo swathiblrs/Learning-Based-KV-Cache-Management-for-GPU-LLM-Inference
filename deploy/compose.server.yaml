@@ -1,0 +1,30 @@
+# Single-owner service on an existing host. Use an SSH tunnel or platform HTTPS;
+# do not publish the API port directly to the internet.
+services:
+  inference:
+    build:
+      context: ..
+      dockerfile: Dockerfile.cpu
+    restart: unless-stopped
+    ports: ["127.0.0.1:8000:8000"]
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    pids_limit: 256
+    mem_limit: 4g
+    cpus: 2
+    tmpfs:
+      - /tmp:size=256m,mode=1777
+    environment:
+      KV_API_KEY_FILE: /run/secrets/api_key
+      KV_MAX_PENDING: "4"
+      KV_MAX_PREFIXES: "10000"
+      KV_BUDGET_BYTES: "33554432"
+    secrets: [api_key]
+    volumes:
+      - model-cache:/home/app/.cache/huggingface
+secrets:
+  api_key:
+    file: ./secrets/api_key
+volumes:
+  model-cache:

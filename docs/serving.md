@@ -73,3 +73,9 @@ Open `notebooks/gpu_optimization.ipynb`. It uses concurrency 1, 60 requests per 
 The default retains the existing short-prefix workload. A separate `--prefix-tokens 1024 --budget-mib 256` experiment can locate a longer-prefix operating regime. SmolLM2-135M float32 uses 46,080 KV bytes per prefix token (45 MiB at 1,024 tokens), so the old 32 MiB budget would admit no such prefix. Increasing length/budget changes the workload and must be reported as such. Length 1,024 is outside the reuse predictor's original 32–256 training range. Do not use that result as a replacement for the original workload or tune on reported held-out traces.
 
 The prior concurrency-1 and concurrency-4 GPU smoke results are preserved separately in `benchmarks/`. New timing mode, logit scope and warmup changes mean the new results must be compared to their own matched no-cache baseline, not directly to historical timings.
+
+## Deployment boundary and longer-prefix validation
+
+`KV_REQUIRE_AUTH=1` requires an API key (environment or `KV_API_KEY_FILE`); all non-health routes are protected. A 64 KiB request-body cap is now enforced before JSON parsing, even for chunked requests. Local experiment defaults remain unauthenticated/loopback. See [deployment runbook](deployment.md) for host prerequisites, verification and limitations.
+
+`notebooks/gpu_long_prefix.ipynb` predefines 1,024-token prefixes, 256 MiB, hot workloads at seeds 101/102/103, three repeats per seed, concurrency 1, and matched no-cache/LRU-shared/learned-shared comparisons. Run each seed separately and retain all results. The primary measures are paired mean HTTP latency and throughput, with p95 also reported. A descriptive all-repeats 5% improvement threshold is declared before these runs; it is not a statistical significance test. A longer-prefix speedup, if observed, applies to that workload, not the prior short-prefix tests or arbitrary production traffic. Frozen predictor training was on shorter prefixes.

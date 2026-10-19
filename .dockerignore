@@ -4,3 +4,5 @@ results
 benchmarks
 __pycache__
 *.zip
+deploy/secrets
+.env

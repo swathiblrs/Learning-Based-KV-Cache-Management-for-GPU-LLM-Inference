@@ -6,7 +6,7 @@ import os
 import threading
 from importlib.metadata import version
 from contextlib import asynccontextmanager, contextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from time import perf_counter
 
@@ -19,6 +19,10 @@ from .traces import Request
 @dataclass(frozen=True)
 class Settings:
     model: str = "HuggingFaceTB/SmolLM2-135M"
+    model_revision: str | None = None
+    api_key: str = field(default="", repr=False)
+    require_auth: bool = False
+    max_body_bytes: int = 65536
     device: str = "cpu"
     policy: str = "lru"
     budget_bytes: int = 32 * 1024**2
@@ -32,6 +36,10 @@ class Settings:
     max_prefixes: int = 10000
 
     def __post_init__(self):
+        if self.require_auth and len(self.api_key) < 32:
+            raise ValueError("Deployment requires an API key of at least 32 characters")
+        if self.max_body_bytes < 1:
+            raise ValueError("Body limit must be positive")
         if self.device not in ("cpu", "cuda") or self.policy not in ("none", "fifo", "lru", "lfu", "learned"):
             raise ValueError("Invalid device/policy")
         if self.copy_mode not in ("baseline", "sliced", "shared") or self.budget_bytes < 0:
@@ -45,7 +53,11 @@ class Settings:
 
     @classmethod
     def from_env(cls):
-        return cls(model=os.getenv("KV_MODEL", cls.model), device=os.getenv("KV_DEVICE", "cpu"),
+        key_file = os.getenv("KV_API_KEY_FILE")
+        key = Path(key_file).read_text().strip() if key_file else os.getenv("KV_API_KEY", "")
+        return cls(api_key=key, require_auth=os.getenv("KV_REQUIRE_AUTH", "0") == "1",
+                   max_body_bytes=int(os.getenv("KV_MAX_BODY_BYTES", "65536")),
+                   model_revision=os.getenv("KV_MODEL_REVISION") or None,model=os.getenv("KV_MODEL", cls.model), device=os.getenv("KV_DEVICE", "cpu"),
                    policy=os.getenv("KV_POLICY", "lru"), budget_bytes=int(os.getenv("KV_BUDGET_BYTES", str(32*1024**2))),
                    predictor=os.getenv("KV_PREDICTOR", ""), tiny=os.getenv("KV_TINY", "0") == "1",
                    copy_mode=os.getenv("KV_COPY_MODE", "baseline"),
@@ -149,7 +161,7 @@ class Engine:
     def __init__(self, settings, metrics):
         import torch
         self.settings, self.metrics = settings, metrics
-        self.model = load_model(settings.model, settings.device, settings.tiny, "float32")
+        self.model = load_model(settings.model, settings.device, settings.tiny, "float32", settings.model_revision)
         if getattr(self.model.config, "sliding_window", None):
             raise ValueError("Only full-attention models supported")
         self.predictor = Predictor.load(settings.predictor) if settings.predictor else None
@@ -278,6 +290,8 @@ def create_app(settings=None, engine_factory=Engine):
         app.state.engine = None
 
     app = FastAPI(title="KV-cache inference research service", lifespan=lifespan)
+    from .access import AccessBoundary
+    app.add_middleware(AccessBoundary, api_key=settings.api_key, max_body_bytes=settings.max_body_bytes)
 
     @app.get("/healthz")
     def health():

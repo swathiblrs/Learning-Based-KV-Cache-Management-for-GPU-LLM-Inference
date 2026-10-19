@@ -29,9 +29,17 @@ def summarize(directory):
     for (policy,mode,concurrency), rows in sorted(groups.items()):
         paired = [100*(baseline[(concurrency,r["repeat"])]["http_p95_ms"]-r["http_p95_ms"])
                   /baseline[(concurrency,r["repeat"])]["http_p95_ms"] for r in rows]
+        throughput_gain = [100*(r["requests_per_second"]/baseline[(concurrency,r["repeat"])]["requests_per_second"]-1) for r in rows]
+        mean_reduction = [100*(1-r["http_mean_ms"]/baseline[(concurrency,r["repeat"])]["http_mean_ms"]) for r in rows] if all("http_mean_ms" in r and "http_mean_ms" in baseline[(concurrency,r["repeat"])] for r in rows) else None
         result.append(dict(policy=policy,copy_mode=mode,concurrency=concurrency,repeats=len(rows),
             median_run_p95_ms=median(r["http_p95_ms"] for r in rows),
             median_requests_per_second=median(r["requests_per_second"] for r in rows),
+            median_throughput_gain_percent=median(throughput_gain),
+            paired_throughput_gain_percent=throughput_gain,
+            throughput_wins=sum(p>0 for p in throughput_gain),
+            median_mean_latency_reduction_percent=median(mean_reduction) if mean_reduction is not None else None,
+            paired_mean_latency_reduction_percent=mean_reduction,
+            mean_latency_wins=sum(p>0 for p in mean_reduction) if mean_reduction is not None else None,
             median_hit_rate=median(r["hit_rate"] for r in rows),
             median_paired_p95_reduction_percent=median(paired),
             paired_p95_reduction_percent=paired,

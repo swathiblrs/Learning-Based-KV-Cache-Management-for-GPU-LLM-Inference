@@ -31,7 +31,7 @@ def cache_bytes(past):
     return sum(t.numel() * t.element_size() for layer in past.layers for t in (layer.keys, layer.values))
 
 
-def load_model(name, device, tiny=False, dtype="auto"):
+def load_model(name, device, tiny=False, dtype="auto", revision=None):
     import torch
     from transformers import AutoModelForCausalLM, LlamaConfig, LlamaForCausalLM
     if device == "cuda" and not torch.cuda.is_available():
@@ -46,7 +46,7 @@ def load_model(name, device, tiny=False, dtype="auto"):
             intermediate_size=64, num_hidden_layers=2, num_attention_heads=4,
             num_key_value_heads=2, max_position_embeddings=2048))
     else:
-        model = AutoModelForCausalLM.from_pretrained(name, dtype=precision,
+        model = AutoModelForCausalLM.from_pretrained(name, revision=revision, dtype=precision,
                                                    attn_implementation="eager")
     return model.to(device=device, dtype=precision).eval()
 
