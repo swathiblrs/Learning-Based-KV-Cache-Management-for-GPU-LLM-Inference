@@ -1,6 +1,6 @@
 # Deployment runbook and evidence requirements
 
-Status: deployment assets are prepared; no external host has been selected or deployed. The long-prefix GPU experiment is also pending. Neither prepared files nor a temporary Colab run establish production deployment.
+Status: the CPU container build and authenticated tiny-model smoke test passed GitHub Actions on source commit `7d0eed3`; [verified CI evidence](validation/container-ci.json). No external host has been selected or deployed. The long-prefix GPU experiment is also pending. Neither prepared files nor a temporary Colab run establish production deployment.
 
 ## Existing Linux host
 
@@ -46,3 +46,5 @@ To stop: `docker compose -f deploy/compose.server.yaml down`. To roll back: sele
 ## Automated container check
 
 The `container-smoke` GitHub Actions job builds `Dockerfile.cpu`, starts an authenticated tiny-model container and runs the deployment checker. It saves logs and runtime evidence. A passing job verifies the container packaging and API boundary only; the tiny-model CI job does not validate real-model hosting or NVIDIA performance. Job execution/results must be checked after push.
+
+Verified container run: [GitHub Actions 39283544724](https://github.com/swathiblrs/Learning-Based-KV-Cache-Management-for-GPU-LLM-Inference/actions/runs/39283544724). All three jobs passed. This closes container-runtime validation; it does not establish a persistent deployed service.

@@ -1,0 +1,24 @@
+{
+  "verified_on": "2026-10-21",
+  "source_commit": "7d0eed3",
+  "workflow_run": "https://github.com/swathiblrs/Learning-Based-KV-Cache-Management-for-GPU-LLM-Inference/actions/runs/39283544724",
+  "conclusion": "success",
+  "jobs": {
+    "core": "success",
+    "inference-correctness": "success",
+    "container-smoke": "success"
+  },
+  "container_checks": [
+    "Build CPU serving image",
+    "Start authenticated tiny-model container",
+    "Verify authentication, reuse and metrics",
+    "Save container evidence"
+  ],
+  "artifact": "container-validation",
+  "limitations": [
+    "Container test uses a random tiny model",
+    "No persistent hosting target selected",
+    "No external production deployment",
+    "Long-prefix GPU speedup experiment pending"
+  ]
+}
