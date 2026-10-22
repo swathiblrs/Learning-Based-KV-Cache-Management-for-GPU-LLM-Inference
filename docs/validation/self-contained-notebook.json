@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "checks": [
+    "All notebook code cells parse",
+    "No files.upload call",
+    "Embedded archive checksum",
+    "Source-file manifest checksums",
+    "Bundled real metadata checksum",
+    "403 source requests loaded without chooser",
+    "Dependency commands generated correctly"
+  ],
+  "not_tested": "GPU execution and dependency installation in a fresh Colab runtime"
+}
